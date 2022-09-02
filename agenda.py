@@ -1,15 +1,13 @@
-import pyautogui as gui, gender_guesser.detector as gender, datetime, time, csv
+import pyautogui as gui, datetime, time, csv
+import gett_gender 
 #acertar **acordos.csv** antes de rodar
-#acertar funçao GUI para adicionar "prazo" na agenda? "gostaria de adicionar prazo?" se ja possui prazo colocado mostrar junto
-#caso cancelar segue como normal, caso adicionar, colocar um imput de data e adicionar, colocar detecção de erro de tipo de data
-#move to an vertual env.
 
 def cobrar(nome, dia_atual, numero):
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
-    pronome = gett_gender(primeiro_nome)
+    pronome = gett_gender.get_gender(primeiro_nome)
     Horario = "Bom dia"
-    mensagem = (f"{Horario} {pronome}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
+    mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
     print(Horario)
 
@@ -27,9 +25,9 @@ def cobrar(nome, dia_atual, numero):
 def cob_prazo(nome, dia_atual, numero):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
-    pronom = gett_gender(primeir_nome)
+    pronom = gett_gender.get_gender(primeir_nome)
     Horari = "Bom dia"
-    mensage = (f"{Horari} {pronom}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
+    mensage = (f"{Horari} {pronom[0]}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
 
     gui.leftClick(x=141, y=141)
@@ -43,28 +41,6 @@ def cob_prazo(nome, dia_atual, numero):
     gui.write(mensage)
     gui.press('enter')
 
-def gett_gender(prompt):
-    L = gender.Detector()
-    result = (L.get_gender(prompt))
-
-    if result  == "male":
-        return("senhor")
-    elif result == "mostly male":
-        return("senhor")
-    elif result == "female":
-        return("senhora")
-    elif result == "mostly female":
-        return("senhora")
-    elif result == "andy":
-        real_result = gui.prompt("""Erro ao detectar pronome! especifique o mesmo:
-        Como gostaria de ser referido? Senhor ou senhora? """)
-        return real_result
-    else:
-        gui.alert(text='Erro ao detectar pronome! Retorne ao console e especifique o mesmo.', title='Erro!!', button='OK')
-        real_result = gui.prompt("""Erro ao detectar pronome! especifique o mesmo:
-        Como gostaria de ser referido? Senhor ou senhora? """)
-        return real_result
-
 def get_horario():
     current_time = (datetime.datetime.now())
     timer = current_time.strftime("%H, %M, %S")
@@ -76,6 +52,22 @@ def get_horario():
     elif hour == ["12","13","14","15","16","17","18"]:
         return "Boa tarde"
 
+def comp():
+    with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
+            csv_reader = csv.reader(file, delimiter=';')  
+            line_count = 0 
+            for devedor in csv_reader:
+                if line_count == 0:  
+                    line_count += 1   
+                else:
+                    nome_dev = devedor[1]
+                    cobrador = devedor[24]
+                    obs_dev = devedor[29]
+                    if cobrador == "6":
+                        if nome_dev == nome:
+                            pass
+                        #search insede obs for my number and formando acordo identifications
+
 def main():
         with open("C:/Users/João/Desktop/automation_acd/acordos.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
@@ -83,19 +75,23 @@ def main():
             for lol in csv_reader:
                 if line_count == 0:  
                     line_count += 1   
-                else: 
+                else:
+                    global formando 
+                    global obs
                     formando = lol[1]  
                     cobrarr = lol[5]
                     obs = lol[6] 
                     data_acd = lol[2]
                     prazo = lol[3]  
                     numero = lol[4] 
-                  
                     dia_atual = datetime.datetime.now().strftime("%d/%m/%y")  
-                    if formando == "null":
-                        nome = lol[0]  
-                    else:
-                        nome = lol[1] 
+                    global nome
+                    nome = lol[0]
+                    #if formando == "null":
+                    #    nome = lol[0]  
+                    #else:
+                    #    nome = lol[1] 
+
                     if dia_atual == data_acd: 
                         if cobrarr == "sim":
                             print(f"Cobrando caso {lol[0]}, Formando: {lol[1]}")
