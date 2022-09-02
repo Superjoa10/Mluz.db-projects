@@ -20,8 +20,8 @@ print("Total Columns:", column)
 #descide which method to store contact number
 def dev_num(obs,forms):
     if forms == True:
-        n_form = re.compile(r"(N_form:) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
-        n_dev = re.compile(r"(N_dev:) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
+        n_form = re.compile(r"(N_form:|n_form) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
+        n_dev = re.compile(r"(N_dev:|n_dev) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
         matches_dev = n_dev.findall(obs)
         for match in matches_dev:
             print(match[1])
@@ -29,6 +29,7 @@ def dev_num(obs,forms):
         for match in matches_form:
             print(match[1])
     elif forms == False:
+        n = re.compile(r"(N:|n:) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
         pass
     
 def form(obs):
