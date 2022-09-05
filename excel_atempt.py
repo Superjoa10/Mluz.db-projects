@@ -1,5 +1,5 @@
 import openpyxl, csv, sqlite3, re, gender_guesser.detector as gender, pyautogui as gui, time
-from gett_gender import get_gender
+from gett_gender import get_gender, dev_num, form, a_form, get_time
 
 #tentar adicionar ao SQLite
 path = "C:/Users/João/Desktop/Access/Devedor.xlsx"
@@ -15,59 +15,13 @@ column = sheet.max_column
 print("Total Rows:", row)
 print("Total Columns:", column)
 
-
 #------------------------------------------------------------------------------------------------------------
 #descide which method to store contact number
-def dev_num(obs,forms):
-    if forms == True:
-        n_form = re.compile(r"(N_form:|n_form) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
-        n_dev = re.compile(r"(N_dev:|n_dev) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
-        matches_dev = n_dev.findall(obs)
-        for match in matches_dev:
-            print(match[1])
-        matches_form = n_form.findall(obs)
-        for match in matches_form:
-            print(match[1])
-    elif forms == False:
-        n = re.compile(r"(N:|n:) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
-        pass
-    
-def form(obs):
-    form = re.compile(r"(Formando:|formando:|FORMANDO:) (o mesmo|O MESMO|O Mesmo|o Mesmo|O mesmo|[aA-zZ*\_\-\s]+\n)")
-    matches = form.findall(obs)
-    #match is a list of ["formando" , "O mesmo"]
-    for match in matches:
-        return match[1]
-
-def a_form(formando):
-    if formando == "o mesmo":
-        return False
-    elif formando == "O MESMO":
-        return False
-    elif formando == "O Mesmo":
-        return False
-    elif formando == "o Mesmo":
-        return False
-    elif formando == "O mesmo":
-        return False
-    elif formando == None:
-        return False
-    elif formando <= len(8): 
-        return True
-
-def get_time():
-    currentTime  = int(time.strftime('%H')) 
-    if currentTime < 12 :
-        return('Bom dia')
-    if currentTime > 12 :
-        return('Boa tarde')
-    if currentTime > 6 :
-        return('Boa noite')
+#by the dev_num() takes obs and forms
 
 with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0 
-            casos_meus = 0
             for devedor in csv_reader:
                 if line_count == 0:  
                     line_count += 1   
@@ -96,7 +50,7 @@ with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") 
                             print(text)
                             
                     line_count += 1
-            print(f"Total Rows: {line_count}, casos meus ativos {casos_meus}")
+            print(f"Total Rows: {line_count}")
 
 conn = sqlite3.connect(':memory:')
 c = conn.cursor()
