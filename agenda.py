@@ -1,12 +1,16 @@
 import pyautogui as gui, datetime, time, csv
-import gett_gender 
+import re
+from gett_gender import get_gender, dev_num, form, a_form, get_time, who_acd
 #acertar **acordos.csv** antes de rodar
+#acertar funçao GUI para adicionar "prazo" na agenda? "gostaria de adicionar prazo?" se ja possui prazo colocado mostrar junto
+#caso cancelar segue como normal, caso adicionar, colocar um imput de data e adicionar, colocar detecção de erro de tipo de data
+#move to an vertual env.
 
 def cobrar(nome, dia_atual, numero):
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
-    pronome = gett_gender.get_gender(primeiro_nome)
-    Horario = "Bom dia"
+    pronome = get_gender(primeiro_nome)
+    Horario = get_time()
     mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
     print(Horario)
@@ -25,7 +29,7 @@ def cobrar(nome, dia_atual, numero):
 def cob_prazo(nome, dia_atual, numero):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
-    pronom = gett_gender.get_gender(primeir_nome)
+    pronom = get_gender(primeir_nome)
     Horari = "Bom dia"
     mensage = (f"{Horari} {pronom[0]}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
@@ -41,17 +45,6 @@ def cob_prazo(nome, dia_atual, numero):
     gui.write(mensage)
     gui.press('enter')
 
-def get_horario():
-    current_time = (datetime.datetime.now())
-    timer = current_time.strftime("%H, %M, %S")
-    lol = timer.split(", ")
-    hour = lol[0]
-
-    if hour == ["06","07","08","09","10","11"]:
-        return "Bom dia"
-    elif hour == ["12","13","14","15","16","17","18"]:
-        return "Boa tarde"
-
 def comp():
     with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
@@ -60,11 +53,16 @@ def comp():
                 if line_count == 0:  
                     line_count += 1   
                 else:
+                    global forms
                     nome_dev = devedor[1]
                     cobrador = devedor[24]
                     obs_dev = devedor[29]
                     if cobrador == "6":
-                        if nome_dev == nome:
+                            formando = form(obs_dev)
+                            print(formando)
+                            forms = a_form(formando)
+                            loko = dev_num(obs_dev, forms)
+                            print(loko[0])
                             pass
                         #search insede obs for my number and formando acordo identifications
 
@@ -87,6 +85,7 @@ def main():
                     dia_atual = datetime.datetime.now().strftime("%d/%m/%y")  
                     global nome
                     nome = lol[0]
+                    comp()
                     #if formando == "null":
                     #    nome = lol[0]  
                     #else:
@@ -111,6 +110,7 @@ def main():
 
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
+
 
 if __name__ == "__main__":
     main()
