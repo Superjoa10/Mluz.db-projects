@@ -1,24 +1,9 @@
 import openpyxl, csv, sqlite3, re, gender_guesser.detector as gender, pyautogui as gui, time
-from gett_gender import get_gender, dev_num, form, a_form, get_time
-
-#tentar adicionar ao SQLite
-path = "C:/Users/João/Desktop/Access/Devedor.xlsx"
-wb = openpyxl.Workbook() 
-wb_obj = openpyxl.load_workbook(path) 
-sheet = wb_obj.active
-
-#https://www.geeksforgeeks.org/how-to-delete-one-or-more-rows-in-excel-using-openpyxl/
-#maybe get a program to delete uneeded info with excel openpyxl
-row = sheet.max_row
-column = sheet.max_column
-  
-print("Total Rows:", row)
-print("Total Columns:", column)
-
+from gett_gender import get_gender, form, a_form, get_time, dev_num
+#if want to add excel go after bitch
 #------------------------------------------------------------------------------------------------------------
 #descide which method to store contact number
 #by the dev_num() takes obs and forms
-
 with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0 
@@ -31,8 +16,51 @@ with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") 
                     prim_nome = nome.split(' ')[0]
                     cobrador = devedor[24]
                     obs = devedor[29]
-                    #also check for cli. cod, e setor
+                    codigo = devedor[25]
+                    #check for cliente
                     if cobrador == "6":
+                        codig = input("Qual codigo gostaria de cobrar? A, B, D ou M").upper()
+                        if codigo == codig:
+                            if codig == "D":
+                                formando = form(obs)
+                                forms = a_form(formando)
+                                if forms == True:
+                                    #true é form é o mesmo
+                                    # cheak for if numero == None better
+                                    numero = dev_num(obs, forms)
+                                    print(numero)
+                                    if numero == None:
+                                        break
+                                    pass
+                                if forms == False:
+                                    numero = dev_num(obs, forms)
+                                    print(numero[0], numero[1])
+                                    num_dev = numero[0]
+                                    if num_dev == None:
+                                        continue
+                                    num_form = numero[1]
+                                    if num_form == None:
+                                        break
+                                    pass
+                            if codig == "B":
+                                if forms == True:
+                                    #form é o mesmo
+                                    pass
+                                if forms == False:
+                                    pass
+                            if codig == "A":
+                                if forms == True:
+                                    #form é o mesmo
+                                    pass
+                                if forms == False:
+                                    pass
+                            if codig == "M":
+                                if forms == True:
+                                    #form é o mesmo
+                                    pass
+                                if forms == False:
+                                    pass
+
                         pronomes_dev = get_gender(prim_nome)
                         print("--------------------------------------------------------")
                         formando = form(obs)
@@ -52,12 +80,5 @@ with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") 
                     line_count += 1
             print(f"Total Rows: {line_count}")
 
-conn = sqlite3.connect(':memory:')
-c = conn.cursor()
 
-c.execute("""CREATE TABLE devedores (
-    nome text, 
-    formando text,
-    numero real
-    ) """)
 
