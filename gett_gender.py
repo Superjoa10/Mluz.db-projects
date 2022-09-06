@@ -40,7 +40,7 @@ def who_acd(obs):
                             return False
                     return True
 
-def dev_num(obs,forms):
+def num_acd(obs,forms):
     if forms == True:
         n_form = re.compile(r'(N_form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
         n_dev = re.compile(r'(N_dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
@@ -69,6 +69,43 @@ def dev_num(obs,forms):
                 return num_forms
         #global numbers_geral
         #numbers_geral = [num_dev, num_forms]
+        #can be called
+    elif forms == False:
+        n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
+        matches_Dev = n_unico.findall(obs)
+        for match in matches_Dev:
+            if not match:
+                print("U GAY AS FUCK")
+                break
+            print(f"dev unico :{match}")
+            global num
+            num = match_form[1]
+            return num
+
+def dev_num(obs,forms):
+    global num_forms
+    global num_dev
+    if forms == True:
+        n_form = re.compile(r'(N_form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_dev = re.compile(r'(N_dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        matches_dev = n_dev.findall(obs)
+        for match_dev in matches_dev:
+            if not match:
+                print (" Sem num devedor!!")
+                num_dev = None
+                continue
+            print(f"numero dev {match_dev[1]}")
+            num_dev = match_dev[1]  
+        matches_form = n_form.findall(obs)
+        for match_form in matches_form:
+            if not match:
+                print (" Sem num formando")
+                num_forms = None
+                continue
+            print(f"n formando {match_form[1]}")
+            num_forms = match_form[1]
+        numbers_geral = [num_dev, num_forms]
+        return numbers_geral
         #can be called
     elif forms == False:
         n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
@@ -117,3 +154,4 @@ def get_time():
 def main():
     pass
 if __name__ == "__main__":
+    main()
