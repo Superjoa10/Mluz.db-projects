@@ -1,6 +1,6 @@
 import pyautogui as gui, datetime, time, csv
 import re
-from gett_gender import get_gender, dev_num, form, a_form, get_time, who_acd
+from gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
 #acertar **acordos.csv** antes de rodar
 #acertar funçao GUI para adicionar "prazo" na agenda? "gostaria de adicionar prazo?" se ja possui prazo colocado mostrar junto
 def cobrar(nome, dia_atual, numero):
@@ -61,7 +61,7 @@ def comp():
                                 global formando
                                 formando = form(obs_dev)
                                 forms = a_form(formando)
-                                loko = dev_num(obs_dev, forms)
+                                loko = num_acd(obs_dev, forms)
                                 return loko
                                 #search insede obs for my number and formando acordo identifications
 
@@ -92,7 +92,9 @@ def main():
                                 print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando}")
                                 cobrar(formando, dia_atual, numero)  
                                 print(f"{nome} cobrado(a)")  
-                        elif cobrarr == "nao":  
+                        elif cobrarr == "nao":
+                            if obs == "0":
+                                obs == None  
                             gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
                             Obs: {obs}''', title='Aviso', button='OK')
 
@@ -100,7 +102,9 @@ def main():
                         if cobrarr == "sim":
                             print(f"Cobrando prazo para dia {prazo}, nome {nome}, Formando: {formando}")
                             cob_prazo(nome, dia_atual, numero) 
-                        elif cobrarr == "nao":  
+                        elif cobrarr == "nao":
+                            if obs == "0":
+                                obs == None    
                             gui.alert(text=f'''O caso com prazo {nome} esta com cobrança automatica desligada!
                             Obs: {obs}''', title='Aviso', button='OK') 
 
