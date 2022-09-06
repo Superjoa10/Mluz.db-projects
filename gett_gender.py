@@ -28,8 +28,8 @@ def get_gender(prompt):
             return ["senhora", "da", "a"]
 
 def who_acd(obs):
-        acd_dev = re.compile(r"(acd_dev|Acd_Dev|acd_Dev|Acd_dev")
-        acd_form = re.compile(r"(acd_form|Acd_Form|acd_Form|Acd_form")
+        acd_dev = re.compile(r"(acd_dev|Acd_Dev|acd_Dev|Acd_dev)")
+        acd_form = re.compile(r"(acd_form|Acd_Form|acd_Form|Acd_form)")
         matches_acd = acd_dev.findall(obs)
         for match_acd in matches_acd:
                     if  not match_acd:
@@ -42,40 +42,43 @@ def who_acd(obs):
 
 def dev_num(obs,forms):
     if forms == True:
-        n_form = re.compile(r"(N_form:|n_form) (\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
-        n_dev = re.compile(r"(N_dev:|n_dev) (\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
+        n_form = re.compile(r'(N_form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_dev = re.compile(r'(N_dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
         whom_acd = who_acd(obs)
         #true is devedor
         if whom_acd == True:
             matches_dev = n_dev.findall(obs)
-        for match_dev in matches_dev:
-            if not match:
-                print (" Sem num devedor!!")
-                pass
-            print(f"numero dev {match_dev[1]}")
-            num_dev = match_dev[1]
-            return num_dev
+            for match_dev in matches_dev:
+                if not match:
+                    print (" Sem num devedor!!")
+                    break
+                print(f"numero dev {match_dev[1]}")
+                global num_dev
+                num_dev = match_dev[1]
+                return num_dev
             
         if whom_acd == False:
             matches_form = n_form.findall(obs)
-        for match_form in matches_form:
-            if not match:
-                print (" Sem num formando")
-                pass
-            print(f"n formando {match_form[1]}")
-            num_forms = match_form[1]
-            return num_forms
-        global numbers_geral
-        numbers_geral = [num_dev, num_forms]
-
+            for match_form in matches_form:
+                if not match:
+                    print (" Sem num formando")
+                    break
+                print(f"n formando {match_form[1]}")
+                global num_forms
+                num_forms = match_form[1]
+                return num_forms
+        #global numbers_geral
+        #numbers_geral = [num_dev, num_forms]
+        #can be called
     elif forms == False:
-        n_unico = re.compile(r"(N:|n:) ((\([1-9]{2}\)|[1-9]{2}) (?:[2-8]|9[1-9])[0-9]{3}\-[0-9]{4})| S/nada)")
+        n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
         matches_Dev = n_unico.findall(obs)
         for match in matches_Dev:
             if not match:
                 print("U GAY AS FUCK")
-                pass
+                break
             print(f"dev unico :{match}")
+            global num
             num = match_form[1]
             return num
 
@@ -99,7 +102,7 @@ def a_form(formando):
         return False
     elif formando == None:
         return False
-    elif formando <= len(8): 
+    else: 
         return True
 
 def get_time():
@@ -114,4 +117,3 @@ def get_time():
 def main():
     pass
 if __name__ == "__main__":
-    main()
