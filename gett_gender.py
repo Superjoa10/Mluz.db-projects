@@ -49,10 +49,7 @@ def num_acd(obs,forms):
         if whom_acd == True:
             matches_dev = n_dev.findall(obs)
             for match_dev in matches_dev:
-                if not match:
-                    print (" Sem num devedor!!")
-                    break
-                print(f"numero dev {match_dev[1]}")
+                print(f"Numero dev: {match_dev[1]}")
                 global num_dev
                 num_dev = match_dev[1]
                 return num_dev
@@ -60,10 +57,7 @@ def num_acd(obs,forms):
         if whom_acd == False:
             matches_form = n_form.findall(obs)
             for match_form in matches_form:
-                if not match:
-                    print (" Sem num formando")
-                    break
-                print(f"n formando {match_form[1]}")
+                print(f"Numero form: {match_form[1]}")
                 global num_forms
                 num_forms = match_form[1]
                 return num_forms
@@ -74,12 +68,9 @@ def num_acd(obs,forms):
         n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
         matches_Dev = n_unico.findall(obs)
         for match in matches_Dev:
-            if not match:
-                print("U GAY AS FUCK")
-                break
-            print(f"dev unico :{match}")
+            print(f"Dev unico :{match[1]}")
             global num
-            num = match_form[1]
+            num = match[1]
             return num
 
 def dev_num(obs,forms):
