@@ -8,6 +8,9 @@ def cobrar(nome, dia_atual, numero):
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
     Horario = get_time()
+    if numero == None:
+        print("no num")
+        pass
     mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
 
@@ -41,7 +44,7 @@ def cob_prazo(nome, dia_atual, numero):
     gui.write(mensage)
     gui.press('enter')
 
-def comp():
+def comp(nome):
     with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0 
@@ -63,8 +66,7 @@ def comp():
                                 forms = a_form(formando)
                                 loko = num_acd(obs_dev, forms)
                                 return loko
-                                #search insede obs for my number and formando acordo identifications
-
+   
 def main():
         with open("C:/Users/João/Python and Projects/Resume.atempts/acordos_altomation/acordos.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
@@ -77,32 +79,36 @@ def main():
                     nome = lol[0]
                     data_acd = lol[1]
                     prazo = lol[2] 
-                    cobrarr = lol[3]
-                    obs = lol[4] 
+                    cobrar = lol[3]
+                    obs = lol[4]
+                    numero = comp(nome)  
                     dia_atual = datetime.datetime.now().strftime("%d/%m/%y")  
-                    numero = comp()
-                    if dia_atual == data_acd: 
-                        if cobrarr == "sim":
+                    if dia_atual == data_acd:
+                        if numero == None:
+                            print(f"No num in case {nome}")
+                            break
+                        if cobrar == "sim":
                             # true is acd dev
                             if who_acd(obs_dev) == True:
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o devedor")
+                                print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
                                 cobrar(nome, dia_atual, numero)  
                                 print(f"{nome} cobrado(a)")  
                             if who_acd(obs_dev) == False:
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando}")
+                                print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
                                 cobrar(formando, dia_atual, numero)  
                                 print(f"{nome} cobrado(a)")  
-                        elif cobrarr == "nao":
+                        elif cobrar == "nao":
                             if obs == "0":
                                 obs == None  
                             gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
                             Obs: {obs}''', title='Aviso', button='OK')
 
                     if dia_atual == prazo:
-                        if cobrarr == "sim":
+                        
+                        if cobrar == "sim":
                             print(f"Cobrando prazo para dia {prazo}, nome {nome}, Formando: {formando}")
                             cob_prazo(nome, dia_atual, numero) 
-                        elif cobrarr == "nao":
+                        elif cobrar == "nao":
                             if obs == "0":
                                 obs == None    
                             gui.alert(text=f'''O caso com prazo {nome} esta com cobrança automatica desligada!
