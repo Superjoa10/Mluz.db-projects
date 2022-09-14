@@ -1,5 +1,4 @@
 import pyautogui as gui, datetime, time, csv
-import re
 from gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
 #acertar **acordos.csv** antes de rodar
 #acertar funçao GUI para adicionar "prazo" na agenda? "gostaria de adicionar prazo?" se ja possui prazo colocado mostrar junto
@@ -23,7 +22,7 @@ def cobrar(nome, dia_atual, numero):
     gui.leftClick(x=755, y=980)
     gui.PAUSE = 2
     gui.write(mensagem)
-    gui.press('enter')
+    
 
 def cob_prazo(nome, dia_atual, numero):
     nom = nome.split(" ")
@@ -42,10 +41,10 @@ def cob_prazo(nome, dia_atual, numero):
     gui.leftClick(x=755, y=980)
     gui.PAUSE = 2
     gui.write(mensage)
-    gui.press('enter')
+    
 
 def comp(nome):
-    with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
+    with open("Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0 
             for devedor in csv_reader:
@@ -68,7 +67,7 @@ def comp(nome):
                                 return loko
    
 def main():
-        with open("C:/Users/João/Python and Projects/Resume.atempts/acordos_altomation/acordos.csv", "r", encoding="Latin-1") as file:  
+        with open("Acordos_9.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0  
             for lol in csv_reader:
@@ -86,7 +85,12 @@ def main():
                     if dia_atual == data_acd:
                         if numero == None:
                             print(f"No num in case {nome}")
-                            break
+                            if obs == "0":
+                                obs == None   
+                            print(f"No num in case {nome}")
+                            gui.alert(text=f'''O acordo {nome} não tem numero para ser cobrado automatico!
+                            Obs: {obs}''', title='Aviso', button='OK')
+                            cobrar = "nao"
                         if cobrar == "sim":
                             # true is acd dev
                             if who_acd(obs_dev) == True:
@@ -104,10 +108,22 @@ def main():
                             Obs: {obs}''', title='Aviso', button='OK')
 
                     if dia_atual == prazo:
-                        
+                        if numero == None:
+                            if obs == "0":
+                                obs == None   
+                            print(f"No num in case {nome}")
+                            gui.alert(text=f'''O caso com prazo {nome} não tem numero para ser cobrado automatico!
+                            Obs: {obs}''', title='Aviso', button='OK')
+                            cobrar = "nao"
                         if cobrar == "sim":
-                            print(f"Cobrando prazo para dia {prazo}, nome {nome}, Formando: {formando}")
-                            cob_prazo(nome, dia_atual, numero) 
+                            if who_acd(obs_dev) == True:
+                                print(f"Cobrando prazo para dia {prazo}, nome {nome}")
+                                cob_prazo(nome, dia_atual, numero) 
+                                print(f"{nome} cobrado(a)")
+                            if who_acd(obs_dev) == False:
+                                print(f"Cobrando prazo para dia {prazo}, nome {nome} acordo com {formando}")
+                                cob_prazo(formando, dia_atual, numero) 
+                                print(f"{nome} cobrado(a)")
                         elif cobrar == "nao":
                             if obs == "0":
                                 obs == None    
