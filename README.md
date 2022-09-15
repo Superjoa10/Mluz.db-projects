@@ -8,4 +8,5 @@ is a python script that uses my old list of deals in excel, that i've turned int
 
 Cobrar_setor.py:
 ***********Work in progress**************
+
 is a python script that reads my works database that i've translated to excel/CSV becouse of the dificulty of working with a 32 bit access old database, were i use old tables insede the DB to observe and detect particularities in the cases, as well as  getting their phone number and sending a texto to it, as well as the ones that don't have a phone number, just an e-mail, and automating the e-mails as well 
