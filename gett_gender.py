@@ -27,18 +27,17 @@ def get_gender(prompt):
         elif real_result == "senhora":
             return ["senhora", "da", "a"]
 
-def who_acd(obs):
-        acd_dev = re.compile(r"(acd_dev|Acd_Dev|acd_Dev|Acd_dev)")
-        acd_form = re.compile(r"(acd_form|Acd_Form|acd_Form|Acd_form)")
-        matches_acd = acd_dev.findall(obs)
-        for match_acd in matches_acd:
-                    if  not match_acd:
-                        matches_acd_form = acd_form.findall(obs)
-                        for match_acd_forms in matches_acd_form:
-                            if not match_acd_forms:
-                                Raise: TypeError("Lol sem def de acordo")
-                            return False
-                    return True
+def who_acd(obs_dev):
+        acd_dev = re.compile(r"(acd_dev|Acd_Dev|acd_Dev|Acd_dev)\n")
+        acd_form = re.compile(r"(acd_form|Acd_Form|acd_Form|Acd_form)\n")
+        matches_acd = bool(acd_dev.search(obs_dev))
+        matches_acd_form = bool(acd_form.search(obs_dev))
+        if matches_acd == True:
+            return True
+        elif matches_acd_form == True:
+            return False
+        else:
+            return "WOW whats fucking up now"
 
 def num_acd(obs,forms):
     if forms == True:
@@ -49,7 +48,6 @@ def num_acd(obs,forms):
         if whom_acd == True:
             matches_dev = n_dev.findall(obs)
             for match_dev in matches_dev:
-                print(f"Numero dev: {match_dev[1]}")
                 global num_dev
                 num_dev = match_dev[1]
                 return num_dev
@@ -57,7 +55,6 @@ def num_acd(obs,forms):
         if whom_acd == False:
             matches_form = n_form.findall(obs)
             for match_form in matches_form:
-                print(f"Numero form: {match_form[1]}")
                 global num_forms
                 num_forms = match_form[1]
                 return num_forms
@@ -68,7 +65,6 @@ def num_acd(obs,forms):
         n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
         matches_Dev = n_unico.findall(obs)
         for match in matches_Dev:
-            print(f"Dev unico :{match[1]}")
             global num
             num = match[1]
             return num
