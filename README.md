@@ -1,7 +1,9 @@
-# Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion
+# *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
 as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors, and the ones i've got deals with.
 
 #*Main branch has PyAUTOGUI commands with my personal device in mind.*#
+
+# Python Files:
 
 get_genderr.py:
 
