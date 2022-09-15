@@ -8,15 +8,13 @@ def cobrar(nome, dia_atual, numero):
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
     Horario = get_time()
-    if numero == None:
-        print("no num")
-        pass
     mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
     time.sleep(5) 
 
     gui.leftClick(x=141, y=141)
     gui.press('backspace', presses = 15)
     gui.press('delete', presses = 15)
+    gui.leftClick(x=141, y=141)
     gui.PAUSE = 2
     gui.write(numero)
     gui.press('enter')
@@ -36,6 +34,7 @@ def cob_prazo(nome, dia_atual, numero):
     gui.leftClick(x=141, y=141)
     gui.press('backspace', presses = 15)
     gui.press('delete', presses = 15)
+    gui.leftClick(x=141, y=141)
     gui.PAUSE = 2
     gui.write(numero)
     gui.press('enter')
@@ -79,41 +78,70 @@ def main():
                     nome = lol[0]
                     data_acd = lol[1]
                     prazo = lol[2] 
-                    cobrar = lol[3]
+                    cobr = lol[3]
                     obs = lol[4]
-                    numero = comp(nome)  
-                    dia_atual = datetime.datetime.now().strftime("%d/%m/%y")  
+                    dia_atual = datetime.datetime.now().strftime("%d/%m/20%y")  
                     if dia_atual == data_acd:
-                        if numero == None:
-                            print(f"No num in case {nome}")
-                            break
-                        if cobrar == "sim":
+                        if cobr == "sim":
+                            numero = comp(nome)  
                             # true is acd dev
-                            if who_acd(obs_dev) == True:
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                cobrar(nome, dia_atual, numero)  
-                                print(f"{nome} cobrado(a)")  
-                            if who_acd(obs_dev) == False:
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                cobrar(formando, dia_atual, numero)  
-                                print(f"{nome} cobrado(a)")  
-                        elif cobrar == "nao":
+                            if numero == None:
+                                if obs == "0":
+                                   obs == None 
+                                print("----------------------------------------------------------------------------------")
+                                print(f"no num on case {nome}")
+                                gui.alert(text=f'''O caso {nome} não possui numero!
+                                Obs: {obs}''', title='Aviso', button='Pass')
+                                pass
+                            else:
+                                if forms == True:
+                                    if who_acd(obs_dev) == True:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
+                                        cobrar(nome, dia_atual, numero)  
+                                        print(f"{nome} cobrado(a)")  
+                                    elif who_acd(obs_dev) == False:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
+                                        cobrar(formando, dia_atual, numero)  
+                                        print(f"{nome} cobrado(a)") 
+                                else:
+                                    print("----------------------------------------------------------------------------------")
+                                    print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                    cobrar(nome, dia_atual, numero)  
+                                    print(f"{nome} cobrado(a)")  
+                        elif cobr == "nao":
                             if obs == "0":
-                                obs == None  
+                                obs == None
+                            print("----------------------------------------------------------------------------------")  
                             gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
                             Obs: {obs}''', title='Aviso', button='OK')
 
-                    if dia_atual == prazo:
-                        
-                        if cobrar == "sim":
-                            print(f"Cobrando prazo para dia {prazo}, nome {nome}, Formando: {formando}")
-                            cob_prazo(nome, dia_atual, numero) 
-                        elif cobrar == "nao":
-                            if obs == "0":
-                                obs == None    
-                            gui.alert(text=f'''O caso com prazo {nome} esta com cobrança automatica desligada!
-                            Obs: {obs}''', title='Aviso', button='OK') 
-
+                    if dia_atual == prazo: 
+                        if cobr == "sim":
+                            if numero == None:
+                                print("----------------------------------------------------------------------------------")
+                                gui.alert(text=f'''O caso {nome} não possui numero!
+                                Obs: {obs}''', title='Aviso', button='Pass')
+                                print(f"No num in case {nome}")
+                                pass
+                            else:
+                                numero = comp(nome)  
+                                if forms == True:
+                                    if who_acd(obs_dev) == True:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
+                                        cob_prazo(nome, dia_atual, numero)  
+                                        print(f"{nome} cobrado(a)")  
+                                    elif who_acd(obs_dev) == False:
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
+                                        cob_prazo(formando, dia_atual, numero)  
+                                        print(f"{nome} cobrado(a)") 
+                                else:
+                                    print("----------------------------------------------------------------------------------")
+                                    print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                    cob_prazo(nome, dia_atual, numero)  
+                                    print(f"{nome} cobrado(a)")  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
 
