@@ -133,10 +133,9 @@ def get_time():
     currentTime  = int(time.strftime('%H')) 
     if currentTime < 12 :
         return('Bom dia')
-    if currentTime > 12 :
+    if currentTime >= 12 :
         return('Boa tarde')
-    if currentTime > 6 :
-        return('Boa noite')
+   
 
 def main():
     pass
