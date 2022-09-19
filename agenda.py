@@ -126,6 +126,7 @@ def main():
 
                     if dia_atual == prazo: 
                         if cobr == "sim":
+                            numero = comp(nome)  
                             if numero == None:
                                 print("----------------------------------------------------------------------------------")
                                 gui.alert(text=f'''O caso {nome} não possui numero!
@@ -133,7 +134,6 @@ def main():
                                 print(f"No num in case {nome}")
                                 pass
                             else:
-                                numero = comp(nome)  
                                 if forms == True:
                                     if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
@@ -148,7 +148,14 @@ def main():
                                     print("----------------------------------------------------------------------------------")
                                     print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
                                     cob_prazo(nome, dia_atual, numero)  
-                                    print(f"{nome} cobrado(a)")  
+                                    print(f"{nome} cobrado(a)")
+                        elif cobr == "nao":
+                                if obs == 0:
+                                    obs == None
+                                print("----------------------------------------------------------------------------------")  
+                                print(f"O caso {nome} esta com cobrança automatica desligada!")
+                                gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
+                                Obs: {obs}''', title='Aviso', button='OK')  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
 
