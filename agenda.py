@@ -141,7 +141,14 @@ def main():
                                     print("----------------------------------------------------------------------------------")
                                     print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
                                     cob_prazo(nome, dia_atual, numero)  
-                                    print(f"{nome} cobrado(a)")  
+                                    print(f"{nome} cobrado(a)")
+                        elif cobr == "nao":
+                                    if obs == 0:
+                                        obs == None
+                                    print("----------------------------------------------------------------------------------")  
+                                    print(f"O caso {nome} esta com cobrança automatica desligada!")
+                                    gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
+                                    Obs: {obs}''', title='Aviso', button='OK')  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
 
