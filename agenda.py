@@ -51,12 +51,8 @@ def cob_prazo(nome, dia_atual, numero):
 
 def comp(nome):
     with open("Devedor.csv", "r", encoding="Latin-1") as file:  
-            csv_reader = csv.reader(file, delimiter=';')  
-            line_count = 0 
+            csv_reader = csv.reader(file, delimiter=';') 
             for devedor in csv_reader:
-                if line_count == 0:  
-                    line_count += 1   
-                else:
                     global forms
                     global obs_dev
                     nome_dev = devedor[1]
@@ -158,6 +154,7 @@ def main():
                                 Obs: {obs}''', title='Aviso', button='OK')  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
+            gui.alert(text=f'''Todos acordos possiveis cobrados do dia {dia_atual}''', title='Done', button='OK')
 
 if __name__ == "__main__":
     main()
