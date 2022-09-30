@@ -41,8 +41,8 @@ def who_acd(obs_dev):
 
 def num_acd(obs,forms):
     if forms == True:
-        n_form = re.compile(r'(N_form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
-        n_dev = re.compile(r'(N_dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_form = re.compile(r'(N_form:|n_form:|N_Form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_dev = re.compile(r'(N_dev:|n_dev:|N_Dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
         whom_acd = who_acd(obs)
         #true is devedor
         if whom_acd == True:
@@ -58,9 +58,7 @@ def num_acd(obs,forms):
                 global num_forms
                 num_forms = match_form[1]
                 return num_forms
-        #global numbers_geral
-        #numbers_geral = [num_dev, num_forms]
-        #can be called
+        
     elif forms == False:
         n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
         matches_Dev = n_unico.findall(obs)
@@ -107,7 +105,7 @@ def dev_num(obs,forms):
             return num
 
 def form(obs):
-    form = re.compile(r"(Formando:|formando:|FORMANDO:) (o mesmo|O MESMO|O Mesmo|o Mesmo|O mesmo|[aA-zZ*\_\-\s]+\n)")
+    form = re.compile(r"(Formando:|formando:|FORMANDO:|Formando|formando|FORMANDO) (o mesmo|O MESMO|O Mesmo|o Mesmo|O mesmo|[aA-zZ*\_\-\s]+\n)")
     matches = form.findall(obs)
     #match is a list of ["formando" , "O mesmo"]
     for match in matches:
