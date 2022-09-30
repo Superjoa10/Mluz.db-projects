@@ -1,6 +1,6 @@
 import pyautogui as gui, datetime, time, csv
 from gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
-#acertar **acordos.csv** antes de rodar
+
 def cobrar(nome, dia_atual, numero):
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
@@ -44,6 +44,7 @@ def cob_prazo(nome, dia_atual, numero):
     gui.press('delete', presses = 200)
     gui.press('backspace', presses = 200)
     gui.PAUSE = 4
+    gui.leftClick(x=600, y=690)
     gui.write(mensage)
     gui.PAUSE = 4
     gui.leftClick(x=600, y=690)
@@ -51,7 +52,7 @@ def cob_prazo(nome, dia_atual, numero):
 
 def comp(nome):
     with open("Devedor.csv", "r", encoding="Latin-1") as file:  
-            csv_reader = csv.reader(file, delimiter=';') 
+            csv_reader = csv.reader(file, delimiter=';')  
             for devedor in csv_reader:
                     global forms
                     global obs_dev
@@ -86,9 +87,8 @@ def main():
                     if dia_atual == data_acd:
                         if cobr == "sim":
                             numero = comp(nome)  
-                            # true is acd dev
                             if numero == None:
-                                if obs == "0":
+                                if obs == 0:
                                    obs == None 
                                 print("----------------------------------------------------------------------------------")
                                 print(f"no num on case {nome}")
@@ -97,6 +97,7 @@ def main():
                                 pass
                             else:
                                 if forms == True:
+                                    # true is acd dev
                                     if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
@@ -113,14 +114,14 @@ def main():
                                     cobrar(nome, dia_atual, numero)  
                                     print(f"{nome} cobrado(a)")  
                         elif cobr == "nao":
-                            if obs == "0":
+                            if obs == 0:
                                 obs == None
                             print("----------------------------------------------------------------------------------")  
                             print(f"O caso {nome} esta com cobrança automatica desligada!")
                             gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
                             Obs: {obs}''', title='Aviso', button='OK')
 
-                    if dia_atual == prazo: 
+                    elif dia_atual == prazo: 
                         if cobr == "sim":
                             numero = comp(nome)  
                             if numero == None:
@@ -133,28 +134,30 @@ def main():
                                 if forms == True:
                                     if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
-                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
+                                        print(f"Cobrando prazo do acordo {nome}, acordo sendo com o devedor {numero}, porem possui formando")
                                         cob_prazo(nome, dia_atual, numero)  
                                         print(f"{nome} cobrado(a)")  
                                     elif who_acd(obs_dev) == False:
-                                        print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
+                                        print(f"Cobrando prazo do {nome}, acordo sendo com o formando: {formando} {numero}")
                                         cob_prazo(formando, dia_atual, numero)  
                                         print(f"{nome} cobrado(a)") 
                                 else:
                                     print("----------------------------------------------------------------------------------")
-                                    print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                    print(f"Cobrando prazo do {nome}, acordo sendo com o devedor {numero}")
                                     cob_prazo(nome, dia_atual, numero)  
                                     print(f"{nome} cobrado(a)")
                         elif cobr == "nao":
-                                if obs == 0:
-                                    obs == None
-                                print("----------------------------------------------------------------------------------")  
-                                print(f"O caso {nome} esta com cobrança automatica desligada!")
-                                gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
-                                Obs: {obs}''', title='Aviso', button='OK')  
+                            if obs == 0:
+                                obs == None
+                            print("----------------------------------------------------------------------------------")  
+                            print(f"O caso {nome} esta com cobrança automatica desligada!")
+                            gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
+                            Obs: {obs}''', title='Aviso', button='OK')  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
             gui.alert(text=f'''Todos acordos possiveis cobrados do dia {dia_atual}''', title='Done', button='OK')
 
 if __name__ == "__main__":
+    horario = get_time()
+    gui.alert(text=f"{horario}, por favor abra o Whatsapp, e tenha certeza que não a atualizações!", title='Aviso', button='Pass')
     main()
