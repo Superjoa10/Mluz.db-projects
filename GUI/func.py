@@ -50,6 +50,29 @@ def cob_prazo(nome, dia_atual, numero):
     gui.press('enter')
     '''
 
+def cobrar_selected(nome, numero):
+    print(f"Lolllllllll {nome} is loko on the {numero}")
+    '''
+    nom = nome.split(" ")
+    primeir_nome = nom[0].capitalize()
+    pronom = get_gender(primeir_nome)
+    Horari = get_time()
+    mensage = (f"{Horari} {pronom[0]}, conforme combinado, aguardo pagamento")   
+    time.sleep(5) 
+
+    gui.leftClick(x=141, y=141)
+    gui.press('backspace', presses = 15)
+    gui.press('delete', presses = 15)
+    gui.leftClick(x=141, y=141)
+    gui.PAUSE = 2
+    gui.write(numero)
+    gui.press('enter')
+    gui.leftClick(x=755, y=980)
+    gui.PAUSE = 2
+    gui.write(mensage)
+    gui.press('enter')
+    '''
+
 #Basic info funcions -----
 def get_gender(prompt):
     L = gender.Detector()
