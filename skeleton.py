@@ -7,26 +7,28 @@ import csv
 from logging import PlaceHolder
 from tkinter import *
 from tkinter import filedialog, messagebox, ttk
-from func import form , a_form, num_acd, who_acd, cobrar, cob_prazo
+from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected
 
 import pandas as pd
-from mysqlx import OperationalError
-from sqlalchemy import values
 
 #----Defining tables, treviews and buttons-----------------------------------------------------
 #****** Main page: ******
 root = Tk()
 root.title("Agenda BETA 1.0")
-root.geometry("450x375")
+root.geometry("730x400")
 
 #Style 
 style = ttk.Style()
 style.theme_use('default')
 
 main_title = Label(root, text="Agenda 2022", padx=3, pady=2, anchor=CENTER, font=("Times New Roman", 30))
-main_title.grid(column=3, row=0, columnspan = 3, ipadx=100, ipady=50)
+main_title.grid(column=0, row=0, columnspan=2, ipadx=80, ipady=50)
 
-#******page for select agenda ******:
+credit = Label(root, text="Made by Superjoa10 (Click to access my github)", padx=3, pady=2, anchor=CENTER, font=("Times New Roman", 7),fg="blue", cursor="hand2")
+credit.grid(column=0, row=3)
+credit.bind("<Button-1>", lambda e: callback("https://github.com/Superjoa10"))
+
+#******page for select agenda ******:2
 
 def year_agenda(): #this is the page
     global year
@@ -65,7 +67,10 @@ def year_agenda(): #this is the page
 
 #main page button to open page
 open_btn = Button(root, text="Abrir agenda", command=year_agenda, padx=3, pady=2, anchor= CENTER)
-open_btn.grid(column=4, row=2)
+open_btn.grid(column=0, row=1)
+
+open_btn = Button(root, text="Informations", command=PlaceHolder, anchor=CENTER)
+open_btn.grid(column=2, row=3, sticky=E, pady=120, padx=150)
 
 #***********Main agenda page definition************
 def open_selected(mes):#This is page
@@ -179,7 +184,7 @@ def open_selected(mes):#This is page
         cob_btn = Button(data_frame, text="Cobrar do dia", command=lambda: cob_dia(mes), anchor= CENTER)
         cob_btn.grid(row=1, column=7)
 
-        cobsel_btn = Button(data_frame, text="Cobrar selecionados", command=lambda: cob_selected(), anchor= CENTER)
+        cobsel_btn = Button(data_frame, text="Cobrar selecionados", command=lambda: cob_selected(mes), anchor= CENTER)
         cobsel_btn.grid(row=1, column=8)
 
         #make it be excluded from table, and added to new table with all excluded, replace prazo with mes do descomprimento?
@@ -241,7 +246,6 @@ def clear_entries():
         pg.delete(0, END)
         obs_entry.delete(0, END)        
 
-
 #FUNCTIONS FOR BUTTONS :
 
 def clear_all():
@@ -277,7 +281,6 @@ def cob_dia(table):
                                 if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        
                                         cobrar(nome, dia_atual, numero)  
                                         print(f"{nome} cobrado(a)")  
                                 elif who_acd(obs_dev) == False:
@@ -334,9 +337,53 @@ foram cobrados {len(acordo_hj)}
 casos com cobrança automatica desligada:
 {acordo_cobdesl}""")
 
-def cob_selected():
-    #see how to get name of selected to search and cob
-    pass
+def cob_selected(table):
+	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
+caso sim, abra o whatsapp e tenha certeza que ele esta atualizado!""")
+	if response == 1:
+            acordos_selec = []
+            acords_bruhh = []
+            x = my_tree.selection()
+            ids_a_cobrar = []
+            for record in x:
+                ids_a_cobrar.append(my_tree.item(record, 'values')[0])
+            conn = sqlite3.connect('agenda.db')
+            cunt = conn.cursor()
+            nome_list = []
+            for rowid in ids_a_cobrar:
+                cunt.execute(f'SELECT rowid, nome FROM {table} WHERE rowid = {rowid}')
+                nomes = cunt.fetchall()
+                #print(nomes)
+                nome_list.append(nomes)
+            for olo in nome_list:
+                nome_ = olo[0]
+                numero = comp(nome_[1]) 
+                if numero == None:
+                    messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
+                    acords_bruhh.append(nome_[1])
+                else:
+                    acordos_selec.append(nome_[1])
+                    if forms == True:
+                        if who_acd(obs_dev) == True:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}, porem possui formando")
+                            cobrar_selected(nome_[1], numero)  
+                            print(f"{nome_[1]} cobrado(a)")  
+                        elif who_acd(obs_dev) == False:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o formando: {formando} {numero}")
+                            cobrar_selected(formando, numero)  
+                            print(f"{nome_[1]} cobrado(a)") 
+                    else:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}")
+                            cobrar_selected(nome_[1], numero)  
+                            print(f"{nome_[1]} cobrado(a)") 
+
+            messagebox.showwarning("Pronto!", f"""Todos os casos selecionadod foram cobrados!
+foram cobrados {len(acordos_selec)}
+casos que não foi possivel cobrar:
+{acords_bruhh}""")
 
 def del_and_sort(table):
             acd_dele = str(table + "_unmade")
@@ -696,7 +743,8 @@ def query_database(table):
         records = c.fetchall()
         for record in records:
                 my_tag='pass' if record[6] == 1 else 'fail' 
-                currency_string = "R${:,.2f}".format(record[4])
+                looo = int(record[4])
+                currency_string = "R${:,.2f}".format(looo)
                 my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3], currency_string, record[5], record[6], record[7]), tags=my_tag)
                 my_tree.tag_configure('pass', background='lightgreen')
                     
