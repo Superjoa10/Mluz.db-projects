@@ -15,14 +15,16 @@ import pandas as pd
 #****** Main page: ******
 root = Tk()
 root.title("Agenda BETA 1.0")
-root.geometry("730x400")
+root.geometry("430x400")
+root.minsize(430, 400)
+root.maxsize(430, 400)
 
 #Style 
 style = ttk.Style()
 style.theme_use('default')
 
-main_title = Label(root, text="Agenda 2022", padx=3, pady=2, anchor=CENTER, font=("Times New Roman", 30))
-main_title.grid(column=0, row=0, columnspan=2, ipadx=80, ipady=50)
+main_title = Label(root, text="Agenda 2022", anchor=CENTER, padx=3, pady=2, font=("Times New Roman", 25))
+main_title.grid(column=0, row=0, columnspan = 3, ipadx=100, ipady=50)
 
 credit = Label(root, text="Made by Superjoa10 (Click to access my github)", padx=3, pady=2, anchor=CENTER, font=("Times New Roman", 7),fg="blue", cursor="hand2")
 credit.grid(column=0, row=3)
@@ -34,12 +36,14 @@ def year_agenda(): #this is the page
     global year
     #Show old and new months/ see how to add list of tables from db
     year = Toplevel()
-    year.title("Info of month")
-    year.geometry("250x300")
+    year.title("Selecione mes")
+    year.geometry("175x325")
+    year.minsize(175, 325)
+    year.maxsize(200, 330)
 
     #buttons:
-    add_btn = Button(year, text="Add new month", command=add_month, anchor=CENTER)
-    add_btn.grid(column = 0, row = 0, padx=2, ipadx= 5, sticky=NE, columnspan = 2)
+    add_btn = Button(year, text="Adicionar novo mes", command=add_month, anchor=CENTER)
+    add_btn.grid(column = 0, row = 0, padx=5, pady=5, ipadx= 5, sticky=NE, columnspan = 2)
     open_btn = Button(year, text="01/22", command=lambda:open_selected('Januery'))
     open_btn.grid(column = 0, row = 1, pady=5, sticky=N)
     open_btn = Button(year, text="02/22", command=lambda:open_selected('Fevereiro'))
@@ -67,25 +71,24 @@ def year_agenda(): #this is the page
 
 #main page button to open page
 open_btn = Button(root, text="Abrir agenda", command=year_agenda, padx=3, pady=2, anchor= CENTER)
-open_btn.grid(column=0, row=1)
+open_btn.grid(column=0, row=1, columnspan=3, ipadx=10, pady=30)
 
-open_btn = Button(root, text="Informations", command=PlaceHolder, anchor=CENTER)
-open_btn.grid(column=2, row=3, sticky=E, pady=120, padx=150)
+open_btn = Button(root, text="Informações", command=PlaceHolder, anchor=CENTER)
+open_btn.grid(column=2, row=3, sticky=E, pady=70, padx=50)
 
 #***********Main agenda page definition************
 def open_selected(mes):#This is page
     try:
         global main
         main = Toplevel()
-        screen_width = main.winfo_screenwidth()
-        screen_height = main.winfo_screenheight()
-        #main.attributes('-fullscreen', True)
+        main.attributes('-fullscreen', False)
         main.title(f"Agenda do mes {mes}")
         year.destroy()
 
         global my_tree
         tree_frame = Frame(main)
         tree_frame.pack(ipady=180, ipadx=450)
+        tree_frame.configure(bg='#bfbfbf')
         # Create a Treeview Scrollbar
         tree_scroll = Scrollbar(tree_frame)
         tree_scroll.pack(side=RIGHT, fill=Y)
@@ -120,16 +123,15 @@ def open_selected(mes):#This is page
         my_tree.heading("valor", text="valor", anchor=CENTER)
         my_tree.heading("cob", text="cob", anchor=CENTER)
         my_tree.heading("pago", text="pago", anchor=CENTER)
-        my_tree.heading("obs", text="obs", anchor=CENTER)
+        my_tree.heading("obs", text="obs", anchor=W)
         query_database(mes)
         
         #Frame for editing info.
-        data_frame = LabelFrame(main, text="Record")
+        data_frame = LabelFrame(main, text="Informações")
         data_frame.place(x=25,y=800,height=130,width=1800)
 
         global rowid_entry, n_entry, val_entry, dt_entry, pz_entry, pg, cbr, obs_entry
         rowid_entry = Entry(data_frame)
-        #rowid_entry.grid(row=0, column=0)
 
         n_label = Label(data_frame, text="Nome")
         n_label.grid(row=0, column=0)
@@ -151,30 +153,15 @@ def open_selected(mes):#This is page
         val_entry = Entry(data_frame)
         val_entry.grid(row=1, column=1, pady=2, ipadx=100)
 
-
-        #cbr_Var = IntVar()
         cbr_label = Label(data_frame, text="Cob auto.")
         cbr_label.grid(row=0, column=4)
         cbr = Entry(data_frame)
         cbr.grid(row=0, column= 5)
 
-        """
-        cbr= Checkbutton(data_frame, text="Y/N", variable = cbr_Var, onvalue=1, offvalue=0)
-        cbr.grid(row=1, column=5)
-        """
-
-        #pg_Var= IntVar()
         pg_label = Label(data_frame, text="Pago")
         pg_label.grid(row=1, column=4)
         pg = Entry(data_frame)
         pg.grid(row=1, column= 5, ipadx=0.0001, ipady=0.0001)
-  
-        """
-        pg= Checkbutton(data_frame, text="Y/N", variable = pg_Var, onvalue=1, offvalue=0)
-        pg.grid(row=0, column= 5)
-        """
-  
-        #cbr_Var = IntVar()
 
         obs_label = Label(data_frame, text="OBS")
         obs_label.grid(row=0, column=6,)
@@ -187,23 +174,25 @@ def open_selected(mes):#This is page
         cobsel_btn = Button(data_frame, text="Cobrar selecionados", command=lambda: cob_selected(mes), anchor= CENTER)
         cobsel_btn.grid(row=1, column=8)
 
-        #make it be excluded from table, and added to new table with all excluded, replace prazo with mes do descomprimento?
         canc_btn = Button(data_frame, text="Cancelar acordo", command=lambda: del_and_sort(mes),anchor= CENTER)
         canc_btn.grid(row=1, column=9)
 
-        update_btn = Button(data_frame, text="Update change", command=lambda: update_record(mes),anchor= CENTER)
+        update_btn = Button(data_frame, text="Aplicar mudança", command=lambda: update_record(mes),anchor= CENTER)
         update_btn.grid(row=1, column=10)
 
-        del_btn = Button(data_frame, text="Delete table", command=lambda:drop_table(mes),anchor= CENTER)
+        del_btn = Button(data_frame, text="Deletar agenda", command=lambda:drop_table(mes),anchor= CENTER)
         del_btn.grid(row=1, column=11)
 
-        add_acd_btn = Button(data_frame, text="Add acordo", command=lambda:add_acordo(),anchor= CENTER)
+        clear_btn = Button(data_frame, text="Limpar campos", command=lambda:clear_entries(), anchor= CENTER)
+        clear_btn.grid(row=2, column=0, ipadx=30, padx=1, pady=5) 
+
+        add_acd_btn = Button(data_frame, text="Adicionar acordo", command=lambda:add_acordo(),anchor= CENTER)
         add_acd_btn.grid(row=2, column=1, ipadx=30, padx=1, pady=5, columnspan=3) 
 
-        delNO_btn = Button(data_frame, text="Delete acd. without sort.", command=lambda:del_no_sort(mes),anchor= CENTER)
+        delNO_btn = Button(data_frame, text="Deletar acd. sem organizar", command=lambda:del_no_sort(mes),anchor= CENTER)
         delNO_btn.grid(row=2, column=5, ipadx=30, padx=1, pady=5, columnspan=3) 
 
-        acd_list_btn = Button(data_frame, text="Acordos desfeitos", command=lambda:open_list(mes),anchor= CENTER)
+        acd_list_btn = Button(data_frame, text="Lista acordos desfeitos", command=lambda:open_list(mes),anchor= CENTER)
         acd_list_btn.grid(row=2, column=8, ipadx=30, padx=1, pady=5, columnspan=3)
         
         my_tree.bind("<ButtonRelease-1>", select_record)
@@ -459,6 +448,8 @@ def update_record(table):
         query_database(table)
 
 def add_acordo():
+    clear_entries()
+    messagebox.showinfo("Adicionar informações", "adicione informações em todos os campos e aperte ")
     # make small warning to add info and press button again aftar adding info
     # clear info Frame box
     # get info from frame box
@@ -582,13 +573,16 @@ def update_table_un():
 def add_month(): #this is the page
     global inf
     inf = Toplevel()
-    inf.title("Info of month")
+    inf.title("Adicionar e-mail")
+    inf.geometry("650x400")
+    inf.minsize(650, 400)
+    inf.maxsize(1200, 800)
 
     #select arquivo e treeview
     open_btn = Button(inf, text="Selecione arquivo a adicionar", command=select_file, padx=3, pady=2, anchor= S)
     open_btn.pack()
-    frame = Frame(inf)
-    frame.pack(ipady=0, ipadx=200)
+    frame = Frame(inf, highlightbackground="black", highlightthickness=2.)
+    frame.pack()
     # Create a Treeview widget
     global tree
     tree = ttk.Treeview(frame)
@@ -608,20 +602,14 @@ def add_month(): #this is the page
     "Outubro",
     "Novembro",
     "Dezembro"]
-    #create_table(options_M)
     var = tkinter.StringVar(inf)
     drop = OptionMenu(inf, var, *options_M, command=callback)
     drop.pack()
-    #find way to access which month selected, IF ALREADY EXISTE GIVE OPTION TO DELETE AND MAKE FUNC TO RE RIGHT
 
-    #conn_db(f'SELECT count(*) FROM {}')
-
-    #if it already exist, make a error handler that asks if you'd like to overwrite
-    #get info, commit than close 
     var.set('Select email')
     comit_month = Button(inf, text="Add month", command=lambda:adding_month(selec, filename), padx=3, pady=2)
-    comit_month.pack()
-    #Label for error handling
+    comit_month.pack(pady=5)
+
     global label
     label = Label(inf, text='')
     label.pack(pady=0, padx=0)
@@ -677,7 +665,7 @@ def adding_month(selection, filename):
         l = df.values.tolist()
         n_rows = int(len(l))
         df['prazo']=['null' for i in range(n_rows)]
-        df['cob']=[0 for i in range(n_rows)]
+        df['cob']=[1 for i in range(n_rows)]
         df['pago']=[0 for i in range(n_rows)]
         df['obs']=['null' for i in range(n_rows)]
         l = df.values.tolist()
@@ -703,7 +691,7 @@ def adding_month(selection, filename):
             l = df.values.tolist()
             n_rows = int(len(l))
             df['prazo']=['null' for i in range(n_rows)]
-            df['cob']=[0 for i in range(n_rows)]
+            df['cob']=[1 for i in range(n_rows)]
             df['pago']=[0 for i in range(n_rows)]
             df['obs']=['null' for i in range(n_rows)]
             l = df.values.tolist()
@@ -738,7 +726,6 @@ def conn_db(command):
 def query_database(table):
         conn = sqlite3.connect('agenda.db')
         c = conn.cursor()
-            #STRFTIME('%d/%m/%Y, data) as formated_data
         c.execute(f"SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} ORDER BY pago DESC, data")
         records = c.fetchall()
         for record in records:
@@ -816,5 +803,4 @@ options_M = [
     "Novembro",
     "Dezembro"]
 
-#create_table(options_M)
 mainloop()
