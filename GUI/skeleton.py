@@ -7,7 +7,7 @@ import csv
 from logging import PlaceHolder
 from tkinter import *
 from tkinter import filedialog, messagebox, ttk
-from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected
+from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected, real_logic
 
 import pandas as pd
 
@@ -31,7 +31,6 @@ credit.grid(column=0, row=3)
 credit.bind("<Button-1>", lambda e: callback("https://github.com/Superjoa10"))
 
 #******page for select agenda ******:2
-
 def year_agenda(): #this is the page
     global year
     #Show old and new months/ see how to add list of tables from db
@@ -77,6 +76,51 @@ open_btn = Button(root, text="Informações", command=PlaceHolder, anchor=CENTER
 open_btn.grid(column=2, row=3, sticky=E, pady=70, padx=50)
 
 #***********Main agenda page definition************
+def return_entry():
+    lonst = []
+    n = n_entry.get()
+
+    clumber = ''.join([x for x in dt_entry.get() if x.isdigit()])
+    clomber = str(datetime.datetime.strptime(clumber, '%d%m%Y'))
+    dt = clomber
+
+    pz = pz_entry.get()
+    val = float(val_entry.get())
+    cob = cbr.get()
+    pago = pg.get()
+    obs = obs_entry.get()
+    lonst.append(n)
+    lonst.append(dt)
+    lonst.append(pz)
+    lonst.append(val)
+    lonst.append(cob)
+    lonst.append(pago)
+    lonst.append(obs)
+    return lonst
+
+def add_acordo(table):
+        clomber = return_entry()
+        clear_entries()
+
+        conn = sqlite3.connect('agenda.db')
+        l = conn.cursor()
+        l.execute(f"INSERT INTO {table} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)",
+            {
+                'nome': clomber[0],
+                'data': clomber[1],
+                'prazo': clomber[2],
+                'valor': clomber[3],
+                'cob': clomber[4],
+                'pago': clomber[5],
+                'obs': clomber[6],})
+        conn.commit()
+        conn.close()
+
+        clear_entries()
+        my_tree.delete(*my_tree.get_children())
+        query_database(table)
+        pass
+
 def open_selected(mes):#This is page
     try:
         global main
@@ -186,7 +230,7 @@ def open_selected(mes):#This is page
         clear_btn = Button(data_frame, text="Limpar campos", command=lambda:clear_entries(), anchor= CENTER)
         clear_btn.grid(row=2, column=0, ipadx=30, padx=1, pady=5) 
 
-        add_acd_btn = Button(data_frame, text="Adicionar acordo", command=lambda:add_acordo(),anchor= CENTER)
+        add_acd_btn = Button(data_frame, text="Adicionar acordo", command=lambda:add_acordo(mes),anchor= CENTER)
         add_acd_btn.grid(row=2, column=1, ipadx=30, padx=1, pady=5, columnspan=3) 
 
         delNO_btn = Button(data_frame, text="Deletar acd. sem organizar", command=lambda:del_no_sort(mes),anchor= CENTER)
@@ -210,9 +254,12 @@ def select_record(e):
         selected = my_tree.focus()
         # Grab record values
         values = my_tree.item(selected, 'values')
-
-        #cleber = int(''.join([x for x in values[4] if x.isdigit()]))
-        cleber = values[4].replace('R$', '')
+        valor_shit = real_logic(values[4])
+        #if valor_shit == True:
+        try:
+            cleber = values[4].replace('R$', '')
+        except:
+            valor_shit == False
 
         # outpus to entry boxes
         rowid_entry.insert(0, values[0]) 
@@ -446,17 +493,6 @@ def update_record(table):
         clear_entries()
         clear_all()
         query_database(table)
-
-def add_acordo():
-    clear_entries()
-    messagebox.showinfo("Adicionar informações", "adicione informações em todos os campos e aperte ")
-    # make small warning to add info and press button again aftar adding info
-    # clear info Frame box
-    # get info from frame box
-    # add infoo to table
-    # if there is nothing in certain boxes make another warning
-    # re-query database
-    pass
 
 def comp(nome):#queries Mluz db.
     with open("Devedor.csv", "r", encoding="Latin-1") as file:  
@@ -730,7 +766,7 @@ def query_database(table):
         records = c.fetchall()
         for record in records:
                 my_tag='pass' if record[6] == 1 else 'fail' 
-                looo = int(record[4])
+                looo = record[4]
                 currency_string = "R${:,.2f}".format(looo)
                 my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3], currency_string, record[5], record[6], record[7]), tags=my_tag)
                 my_tree.tag_configure('pass', background='lightgreen')
@@ -756,7 +792,7 @@ def create_table(option):
         nome text,
         data integer,
         prazo text,
-        valor integer,
+        valor real,
         cob integer,
         pago integer,
         obs text)""")
