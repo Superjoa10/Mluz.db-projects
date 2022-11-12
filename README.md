@@ -19,7 +19,7 @@ get_genderr.py:
 
 Is a group of complementory functions that i've created to avoid making the same functions everytime i detect a gender for exemple, or using regex to extract numbers from the DB.
 
-# ------------------------------------------
+# -----------------------------------------------------------------------------
 GUI directory: *WORK IN PROGRESS*
 
 Takes the whole concept and turns it into a GUI, for better organization and ease of use, instead of using my list of deals in excel, and turning it to a csv every time i use it
