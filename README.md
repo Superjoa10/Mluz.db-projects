@@ -12,7 +12,7 @@ Agenda.py:
 (requires list of deals, and database with numbers)
 is a python script that uses my old list of deals in excel(not here for obvious reasons), that i've turned into a CSV(acordos.csv, line 73) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal.
 
-It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, not here for obvios reasons) 
+It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, not here for obvios reasons, refereced in line 54) 
 
 
 get_genderr.py:
