@@ -2,7 +2,7 @@
 as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors, and the ones i've got deals with.
 
 #*WORK PC BRANCH - PYAUTOGUI for automating whatsapp messages*#
-taking in account that selenium opens different pages, something that can take longer with old computers, using a Makro for this negates this.
+taking in account that selenium opens different pages, something that can take longer with old computers, using a Makro for this negates this problem.
 
 # Python files:
 
