@@ -3,7 +3,7 @@ as well as automation of some boring tasks i have at my job, such as sending mes
 
 *Main branch uses Selenium for the whatsapp automation.*
 
-PYAUTOGUI takes control of the computers mouse, making it so that the automation is the only thing your computer is doing. Selenium let's you do other stuff while the automation runs, if the computer can run it.
+PYAUTOGUI takes control of the computers mouse, making it so that the automation is the only thing your computer is doing. Selenium let's you do other stuff while the automation runs, if the computer can run it smoothly.
 
 # Python Files:
 
