@@ -70,7 +70,7 @@ def comp(nome):
                                 return loko
    
 def main():
-        with open("Acordos_9.csv", "r", encoding="Latin-1") as file:  
+        with open("Acordos.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0
             acordos_cob = []
