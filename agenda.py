@@ -1,50 +1,47 @@
 import pyautogui as gui, datetime, time, csv
 import re
 from gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
+import urllib
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
 #acertar **acordos.csv** antes de rodar
-#acertar funçao GUI para adicionar "prazo" na agenda? "gostaria de adicionar prazo?" se ja possui prazo colocado mostrar junto
-def cobrar(nome, dia_atual, numero):
+
+def cobrar(nome, dia_atual, numero_, navegador):
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
     Horario = get_time()
-    mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
+    numero = "55" + numero_
+    mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")  
+
+    texto = urllib.parse.quote(mensagem)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={texto}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-    gui.leftClick(x=141, y=141)
-    gui.press('backspace', presses = 15)
-    gui.press('delete', presses = 15)
-    gui.leftClick(x=141, y=141)
-    gui.PAUSE = 2
-    gui.write(numero)
-    gui.press('enter')
-    gui.leftClick(x=755, y=980)
-    gui.PAUSE = 2
-    gui.write(mensagem)
-    gui.press('enter')
-
-def cob_prazo(nome, dia_atual, numero):
+def cob_prazo(nome, dia_atual, numero_, navegador):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
+    numero = "55" + numero_
     mensage = (f"{Horari} {pronom[0]}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
+ 
+    text = urllib.parse.quote(mensage)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={text}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-    gui.leftClick(x=141, y=141)
-    gui.press('backspace', presses = 15)
-    gui.press('delete', presses = 15)
-    gui.leftClick(x=141, y=141)
-    gui.PAUSE = 2
-    gui.write(numero)
-    gui.press('enter')
-    gui.leftClick(x=755, y=980)
-    gui.PAUSE = 2
-    gui.write(mensage)
-    gui.press('enter')
-
 def comp(nome):
-    with open("C:/Users/João/Desktop/Access/Devedor.csv", "r", encoding="Latin-1") as file:  
+    with open("Devedor.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0 
             for devedor in csv_reader:
@@ -66,8 +63,8 @@ def comp(nome):
                                 loko = num_acd(obs_dev, forms)
                                 return loko
    
-def main():
-        with open("C:/Users/João/Python and Projects/Resume.atempts/acordos_altomation/acordos.csv", "r", encoding="Latin-1") as file:  
+def main(navegador):
+        with open("acordos.csv", "r", encoding="Latin-1") as file:  
             csv_reader = csv.reader(file, delimiter=';')  
             line_count = 0  
             for lol in csv_reader:
@@ -84,7 +81,6 @@ def main():
                     if dia_atual == data_acd:
                         if cobr == "sim":
                             numero = comp(nome)  
-                            # true is acd dev
                             if numero == None:
                                 if obs == "0":
                                    obs == None 
@@ -98,17 +94,17 @@ def main():
                                     if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cobrar(nome, dia_atual, numero)  
+                                        cobrar(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")  
                                     elif who_acd(obs_dev) == False:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cobrar(formando, dia_atual, numero)  
+                                        cobrar(formando, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)") 
                                 else:
                                     print("----------------------------------------------------------------------------------")
                                     print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                    cobrar(nome, dia_atual, numero)  
+                                    cobrar(nome, dia_atual, numero, navegador)  
                                     print(f"{nome} cobrado(a)")  
                         elif cobr == "nao":
                             if obs == "0":
@@ -119,6 +115,7 @@ def main():
 
                     if dia_atual == prazo: 
                         if cobr == "sim":
+                            numero = comp(nome) 
                             if numero == None:
                                 print("----------------------------------------------------------------------------------")
                                 gui.alert(text=f'''O caso {nome} não possui numero!
@@ -131,26 +128,24 @@ def main():
                                     if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cob_prazo(nome, dia_atual, numero)  
+                                        cob_prazo(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")  
                                     elif who_acd(obs_dev) == False:
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cob_prazo(formando, dia_atual, numero)  
+                                        cob_prazo(formando, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)") 
                                 else:
                                     print("----------------------------------------------------------------------------------")
                                     print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                    cob_prazo(nome, dia_atual, numero)  
-                                    print(f"{nome} cobrado(a)")
-                        elif cobr == "nao":
-                                    if obs == 0:
-                                        obs == None
-                                    print("----------------------------------------------------------------------------------")  
-                                    print(f"O caso {nome} esta com cobrança automatica desligada!")
-                                    gui.alert(text=f'''O caso {nome} esta com cobrança automatica desligada!
-                                    Obs: {obs}''', title='Aviso', button='OK')  
+                                    cob_prazo(nome, dia_atual, numero, navegador)  
+                                    print(f"{nome} cobrado(a)")  
                     line_count += 1  
             print(f'hoje é dia {dia_atual}. Acordos ativos: {line_count - 1}. ')
 
 if __name__ == "__main__":
-    main()
+    navegador = webdriver.Chrome()
+    navegador.get("https://web.whatsapp.com/")
+
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    main(navegador)

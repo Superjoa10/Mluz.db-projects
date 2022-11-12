@@ -1,19 +1,24 @@
 # *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
 as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors, and the ones i've got deals with.
 
-#*Main branch has PyAUTOGUI commands with my personal device in mind.*#
+#*Main branch uses Selenium for the whatsapp automation.*#
+PYAUTOGUI takes control of the computers mouse, making it so that the automation is the only thing your computer is doing. Selenium let's you do other stuff while the automation runs, if the computer can run it.
 
 # Python Files:
+
+Agenda.py:
+
+(requires list of deals, and database with numbers)
+is a python script that uses my old list of deals in excel(not here for obvious reasons), that i've turned into a CSV(acordos.csv, line 67) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal.
+
+It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, not here for obvios reasons, line 44).  
+
 
 get_genderr.py:
 
 Is a group of complementory functions that i've created to avoid making the same functions everytime i detect a gender for exemple, or using regex to extract numbers from the DB.
 
-Agenda.py:
+# ------------------------------------------
+GUI directory: *WORK IN PROGRESS*
 
-is a python script that uses my old list of deals in excel, that i've turned into a CSV(acordos.csv) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal. 
-
-Cobrar_setor.py:
-***********Work in progress**************
-
-is a python script that reads my works database that i've translated to excel/CSV becouse of the dificulty of working with a 32 bit access old database, were i use old tables insede the DB to observe and detect particularities in the cases, as well as  getting their phone number and sending a texto to them, as well as the ones that don't have a phone number, just an e-mail, and automating the sending of e-mails as well.
+Takes the whole concept and turns it into a GUI, for better organization and ease of use, instead of using my list of deals in excel, and turning it to a csv every time i use it
