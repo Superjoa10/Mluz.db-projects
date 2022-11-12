@@ -1,7 +1,7 @@
 # *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
 as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors, and the ones i've got deals with.
 
-#*Main branch uses Selenium for the whatsapp automation.*#
+**Main branch uses Selenium for the whatsapp automation.*
 
 PYAUTOGUI takes control of the computers mouse, making it so that the automation is the only thing your computer is doing. Selenium let's you do other stuff while the automation runs, if the computer can run it.
 
