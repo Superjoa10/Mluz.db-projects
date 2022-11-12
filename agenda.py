@@ -159,5 +159,5 @@ def main():
 
 if __name__ == "__main__":
     horario = get_time()
-    gui.alert(text=f"{horario}, por favor abra o Whatsapp, e tenha certeza que não a atualizações!", title='Aviso', button='Pass')
+    gui.alert(text=f"{horario}, por favor abra o Whatsapp, e tenha certeza que não a atualizações!", title='Começar automação', button='Proseguir')
     main()
