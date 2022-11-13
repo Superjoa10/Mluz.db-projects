@@ -931,18 +931,4 @@ def add_info(list, table, row):
     conn.commit()
     conn.close()
 #---------------------------------------------------------------------------------------------------------------------------------------------
-options_M = [
-    "Januery", 
-    "Fevereiro", 
-    "Março", 
-    "Abril", 
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro"]
-
 mainloop()
