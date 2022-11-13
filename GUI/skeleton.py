@@ -4,10 +4,15 @@ import tkinter
 import traceback
 import datetime
 import csv
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
+import urllib
 from logging import PlaceHolder
 from tkinter import *
 from tkinter import filedialog, messagebox, ttk
-from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected, real_logic
+from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected, cobrar_posiçao, real_logic 
 
 import pandas as pd
 
@@ -172,7 +177,7 @@ def open_selected(mes):#This is page
         
         #Frame for editing info.
         data_frame = LabelFrame(main, text="Informações")
-        data_frame.place(x=25,y=800,height=130,width=1800)
+        data_frame.place(x=25,y=800,height=150,width=1800)
 
         global rowid_entry, n_entry, val_entry, dt_entry, pz_entry, pg, cbr, obs_entry
         rowid_entry = Entry(data_frame)
@@ -208,7 +213,7 @@ def open_selected(mes):#This is page
         pg.grid(row=1, column= 5, ipadx=0.0001, ipady=0.0001)
 
         obs_label = Label(data_frame, text="OBS")
-        obs_label.grid(row=0, column=6,)
+        obs_label.grid(row=0, column=6)
         obs_entry = Entry(data_frame)
         obs_entry.grid(row=0, column=7, columnspan=5, ipadx=300)
 
@@ -218,26 +223,32 @@ def open_selected(mes):#This is page
         cobsel_btn = Button(data_frame, text="Cobrar selecionados", command=lambda: cob_selected(mes), anchor= CENTER)
         cobsel_btn.grid(row=1, column=8)
 
-        canc_btn = Button(data_frame, text="Cancelar acordo", command=lambda: del_and_sort(mes),anchor= CENTER)
-        canc_btn.grid(row=1, column=9)
-
-        update_btn = Button(data_frame, text="Aplicar mudança", command=lambda: update_record(mes),anchor= CENTER)
-        update_btn.grid(row=1, column=10)
-
-        del_btn = Button(data_frame, text="Deletar agenda", command=lambda:drop_table(mes),anchor= CENTER)
-        del_btn.grid(row=1, column=11)
+        acd_list_btn = Button(data_frame, text="Posição selecionado", command=lambda:cob_posicao(mes),anchor= CENTER)
+        acd_list_btn.grid(row=1, column=9, pady=5) 
 
         clear_btn = Button(data_frame, text="Limpar campos", command=lambda:clear_entries(), anchor= CENTER)
-        clear_btn.grid(row=2, column=0, ipadx=30, padx=1, pady=5) 
+        clear_btn.grid(row=1, column=10, pady=5)
+
+        update_btn = Button(data_frame, text="Aplicar mudança", command=lambda: update_record(mes),anchor= CENTER)
+        update_btn.grid(row=1, column=11, pady=5)
 
         add_acd_btn = Button(data_frame, text="Adicionar acordo", command=lambda:add_acordo(mes),anchor= CENTER)
-        add_acd_btn.grid(row=2, column=1, ipadx=30, padx=1, pady=5, columnspan=3) 
+        add_acd_btn.grid(row=2, column=1, padx=1, pady=5) 
+
+        canc_btn = Button(data_frame, text="Cancelar acordo", command=lambda: del_and_sort(mes),anchor= CENTER)
+        canc_btn.grid(row=2, column=3)
 
         delNO_btn = Button(data_frame, text="Deletar acd. sem organizar", command=lambda:del_no_sort(mes),anchor= CENTER)
-        delNO_btn.grid(row=2, column=5, ipadx=30, padx=1, pady=5, columnspan=3) 
+        delNO_btn.grid(row=2, column=5, pady=5) 
+
+        del_btn = Button(data_frame, text="Deletar agenda", command=lambda:drop_table(mes),anchor= CENTER)
+        del_btn.grid(row=2, column=7, pady=5) 
+
+        acd_list_btn = Button(data_frame, text="Pegar Excel - Lista de acordos", command=lambda:get_excel(mes),anchor= CENTER)
+        acd_list_btn.grid(row=2, column=9, pady=5)
 
         acd_list_btn = Button(data_frame, text="Lista acordos desfeitos", command=lambda:open_list(mes),anchor= CENTER)
-        acd_list_btn.grid(row=2, column=8, ipadx=30, padx=1, pady=5, columnspan=3)
+        acd_list_btn.grid(row=2, column=11, pady=5)
         
         my_tree.bind("<ButtonRelease-1>", select_record)
 
@@ -289,7 +300,13 @@ def clear_all():
       my_tree.delete(item)
 
 def cob_dia(table):
-        messagebox.showwarning("Checar Whatsapp", "Essa versão da agenda usa PYAUTOGUI para mandar mensagem, antes de continuar abra o whatsapp e verifique se não a nenhuma atualização")
+        messagebox.showwarning("Checar Whatsapp", "Essa versão da agenda usa o Selenium para mandar mensagem, antes de continuar abra o whatsapp e verifique se não a nenhuma atualização")
+        navegador = webdriver.Chrome()
+        navegador.get("https://web.whatsapp.com/")
+
+        while len(navegador.find_elements(By.ID, 'side')) < 1: 
+            time.sleep(1)
+
         acordo_hj = []
         acordo_cobdesl = []
         dia_atual = datetime.datetime.now().strftime("%d/%m/20%y")
@@ -309,30 +326,30 @@ def cob_dia(table):
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
-                            messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
-                            acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
+                                        acordo_cobdesl.append(nome)
                         else:
                             acordo_hj.append(nome)
                             if forms == True:
                                 if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cobrar(nome, dia_atual, numero)  
+                                        cobrar(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")  
                                 elif who_acd(obs_dev) == False:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cobrar(formando, dia_atual, numero)  
+                                        cobrar(formando, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)") 
                             else:
-                                print("----------------------------------------------------------------------------------")
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                cobrar(nome, dia_atual, numero)  
-                                print(f"{nome} cobrado(a)")  
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                        cobrar(nome, dia_atual, numero, navegador)  
+                                        print(f"{nome} cobrado(a)")  
                     elif cobrar_ == 0:
-                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada")
-                        acordo_cobdesl.append(nome)
-                        pass
+                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada")
+                                        acordo_cobdesl.append(nome)
+                                        pass
                 elif pago == 1:
                     pass
 
@@ -341,30 +358,30 @@ def cob_dia(table):
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
-                            messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
-                            acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
+                                        acordo_cobdesl.append(nome)
                         else:
                             acordo_hj.append(nome)
                             if forms == True:
                                 if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cob_prazo(nome, dia_atual, numero)  
+                                        cob_prazo(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")  
                                 elif who_acd(obs_dev) == False:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cob_prazo(formando, dia_atual, numero)  
+                                        cob_prazo(formando, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)") 
                             else:
-                                print("----------------------------------------------------------------------------------")
-                                print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                cob_prazo(nome, dia_atual, numero)  
-                                print(f"{nome} cobrado(a)")
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                        cob_prazo(nome, dia_atual, numero, navegador)  
+                                        print(f"{nome} cobrado(a)")
                     elif cobrar_ == 0:
-                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
-                        acordo_cobdesl.append(nome)
-                        pass
+                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
+                                        acordo_cobdesl.append(nome)
+                                        pass
                 elif pago == 1:
                     pass
 
@@ -375,8 +392,14 @@ casos com cobrança automatica desligada:
 
 def cob_selected(table):
 	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
-caso sim, abra o whatsapp e tenha certeza que ele esta atualizado!""")
+caso sim, tenha o celular em mãos""")
 	if response == 1:
+            navegador = webdriver.Chrome()
+            navegador.get("https://web.whatsapp.com/")
+
+            while len(navegador.find_elements(By.ID, 'side')) < 1: 
+                time.sleep(1)
+
             acordos_selec = []
             acords_bruhh = []
             x = my_tree.selection()
@@ -389,7 +412,6 @@ caso sim, abra o whatsapp e tenha certeza que ele esta atualizado!""")
             for rowid in ids_a_cobrar:
                 cunt.execute(f'SELECT rowid, nome FROM {table} WHERE rowid = {rowid}')
                 nomes = cunt.fetchall()
-                #print(nomes)
                 nome_list.append(nomes)
             for olo in nome_list:
                 nome_ = olo[0]
@@ -403,20 +425,73 @@ caso sim, abra o whatsapp e tenha certeza que ele esta atualizado!""")
                         if who_acd(obs_dev) == True:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}, porem possui formando")
-                            cobrar_selected(nome_[1], numero)  
+                            cobrar_selected(nome_[1], numero, navegador)  
                             print(f"{nome_[1]} cobrado(a)")  
                         elif who_acd(obs_dev) == False:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o formando: {formando} {numero}")
-                            cobrar_selected(formando, numero)  
+                            cobrar_selected(formando, numero, navegador)  
                             print(f"{nome_[1]} cobrado(a)") 
                     else:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}")
-                            cobrar_selected(nome_[1], numero)  
+                            cobrar_selected(nome_[1], numero, navegador)  
                             print(f"{nome_[1]} cobrado(a)") 
 
             messagebox.showwarning("Pronto!", f"""Todos os casos selecionadod foram cobrados!
+foram cobrados {len(acordos_selec)}
+casos que não foi possivel cobrar:
+{acords_bruhh}""")
+
+def cob_posicao(table):
+	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
+caso sim, tenha o celular em mãos""")
+	if response == 1:
+            navegador = webdriver.Chrome()
+            navegador.get("https://web.whatsapp.com/")
+
+            while len(navegador.find_elements(By.ID, 'side')) < 1: 
+                time.sleep(1)
+
+            acordos_selec = []
+            acords_bruhh = []
+            x = my_tree.selection()
+            ids_a_cobrar = []
+            for record in x:
+                ids_a_cobrar.append(my_tree.item(record, 'values')[0])
+            conn = sqlite3.connect('agenda.db')
+            cunt = conn.cursor()
+            nome_list = []
+            for rowid in ids_a_cobrar:
+                cunt.execute(f'SELECT rowid, nome FROM {table} WHERE rowid = {rowid}')
+                nomes = cunt.fetchall()
+                nome_list.append(nomes)
+            for olo in nome_list:
+                nome_ = olo[0]
+                numero = comp(nome_[1]) 
+                if numero == None:
+                    messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
+                    acords_bruhh.append(nome_[1])
+                else:
+                    acordos_selec.append(nome_[1])
+                    if forms == True:
+                        if who_acd(obs_dev) == True:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Pedindo posição do acordo do {nome_[1]}, acordo sendo com o devedor {numero}, porem possui formando")
+                            cobrar_posiçao(nome_[1], numero, navegador)  
+                            print(f"{nome_[1]} cobrado(a)")  
+                        elif who_acd(obs_dev) == False:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Pedindo posição do acordo {nome_[1]}, acordo sendo com o formando: {formando} {numero}")
+                            cobrar_posiçao(formando, numero, navegador)  
+                            print(f"{nome_[1]} cobrado(a)") 
+                    else:
+                            print("----------------------------------------------------------------------------------")
+                            print(f"Pedindo posição do acordo {nome_[1]}, acordo sendo com o devedor {numero}")
+                            cobrar_posiçao(nome_[1], numero, navegador)  
+                            print(f"{nome_[1]} cobrado(a)") 
+
+            messagebox.showwarning("Pronto!", f"""Todos os casos selecionados pedidos posição!
 foram cobrados {len(acordos_selec)}
 casos que não foi possivel cobrar:
 {acords_bruhh}""")
@@ -517,6 +592,9 @@ def comp(nome):#queries Mluz db.
                                 loko = num_acd(obs_dev, forms)
                                 return loko
 
+def get_excel(table): # make button
+    pass
+
 #Unmade deals page and function especifics.
 def open_list(mes): #unmade acds page
         # open small window if list of descumprido acordos
@@ -532,7 +610,7 @@ def open_list(mes): #unmade acds page
         tree_scroll_un.pack(side=RIGHT, fill=Y)
  
         # Create The Treeview
-        my_tree_unmade = ttk.Treeview(tree_frame_unmade, yscrollcommand=tree_scroll_un.set, selectmode="extended", height=34) #25
+        my_tree_unmade = ttk.Treeview(tree_frame_unmade, yscrollcommand=tree_scroll_un.set, selectmode="extended", height=40) #25
         my_tree_unmade.pack()
 
         # Configure the Scrollbar
@@ -557,9 +635,11 @@ def open_list(mes): #unmade acds page
         my_tree_unmade.heading("valor", text="valor", anchor=CENTER)
         my_tree_unmade.heading("obs", text="obs", anchor=CENTER)
 
-        global n_entry_un, obs_entry_un
+        global rowid_entry_un, n_entry_un, obs_entry_un
         data_frame_un = LabelFrame(unmade, text="Record")
-        data_frame_un.place(x=25,y=690,height=60,width=1500)
+        data_frame_un.place(x=100,y=850,height=60,width=1620)
+
+        rowid_entry_un = Entry(data_frame_un)
 
         n_label_un = Label(data_frame_un, text="Nome")
         n_label_un.grid(row=0, column=0)
@@ -567,14 +647,14 @@ def open_list(mes): #unmade acds page
         n_entry_un.grid(row=0, column=1, ipadx=100, padx=5)
 
         obs_label_un = Label(data_frame_un, text="OBS")
-        obs_label_un.grid(row=0, column=2,)
+        obs_label_un.grid(row=0, column=2)
         obs_entry_un = Entry(data_frame_un)
         obs_entry_un.grid(row=0, column=3, ipadx=350, padx=5)
 
-        update_btn = Button(data_frame_un, text="Update change", command=lambda: update_table_un(),anchor= CENTER)
+        update_btn = Button(data_frame_un, text="Update change", command=lambda: update_table_un(mes),anchor= CENTER)
         update_btn.grid(row=0, column=4, padx=15)
 
-        update_btn = Button(data_frame_un, text="Get CSV", command=lambda: get_csv_un(),anchor= CENTER)
+        update_btn = Button(data_frame_un, text="Get Excel", command=lambda: get_excel_un(mes),anchor= CENTER)
         update_btn.grid(row=0, column=5, padx=15)
 
         my_tree_unmade.bind("<ButtonRelease-1>", select_record_un)
@@ -588,21 +668,47 @@ def select_record_un(e):
         # Grab record Number
         selected = my_tree_unmade.focus()
         # Grab record values
-        values = my_tree_unmade.item(selected, 'values')
+        values_ = my_tree_unmade.item(selected, 'values')
         # outpus to entry boxes
-        n_entry_un.insert(0, values[1])
-        obs_entry_un.insert(0, values[4])
+
+        rowid_entry_un.insert(0, values_[0]) 
+        n_entry_un.insert(0, values_[1])
+        obs_entry_un.insert(0, values_[4])
 
 def clear_entries_un():
     n_entry_un.delete(0, END)
     obs_entry_un.delete(0, END)
     pass
 
-def get_csv_un():
+def get_excel_un(table):
     pass
 
-def update_table_un():
-    pass
+def clear_all_un():
+   for item in my_tree_unmade.get_children():
+      my_tree_unmade.delete(item)
+
+def update_table_un(table):
+        table_un = table + "_unmade"
+        selected = my_tree.focus()
+        my_tree.item(selected, text="", values=(rowid_entry_un.get(), n_entry_un.get(), obs_entry_un.get()))
+
+        conn = sqlite3.connect('agenda.db')
+        c = conn.cursor()
+
+        c.execute(f"""UPDATE {table_un} SET
+            nome = :nome,
+            obs = :obs
+            WHERE oid = :oid""",
+            {
+                'nome': n_entry_un.get(),
+                'obs': obs_entry_un.get(),
+                'oid': rowid_entry_un.get(),})
+
+        conn.commit()
+        conn.close()
+        clear_entries_un()
+        clear_all_un()
+        query_db_unmade(table)
 
 # *****add month page *****:
 
@@ -782,7 +888,7 @@ def query_db_unmade(table):
         records = c_unmade.fetchall()
         for record in records:
                 currency_string_un = "R${:,.2f}".format(record[3])
-                my_tree_unmade.insert(parent='', index='end', text='', values=(record[0], record[1], record[2],currency_string_un, record[4]))
+                my_tree_unmade.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], currency_string_un, record[4]))
         conn.commit()
         conn.close()
 
@@ -800,7 +906,7 @@ def create_table(option):
         conn_db(f"""CREATE TABLE if not exists {cancel_acd}(
         nome text,
         data integer,
-        valor text,
+        valor real,
         obs text)""")
 
 def drop_table(table):
