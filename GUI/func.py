@@ -2,76 +2,79 @@ import re
 import time
 import pyautogui as gui
 import gender_guesser.detector as gender
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+import time
+import urllib
+import datetime
 
-#GUI functions -----------
-def cobrar(nome, dia_atual, numero):
-    print(f"Lolllllllll {nome} is loko on the {numero}")
-    """
+#put it git repository *****
+
+#Automation functions -----------
+def cobrar(nome, dia_atual, numero_, navegador):
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
     Horario = get_time()
-    mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")   
+    numero = "55" + numero_
+    mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")  
+
+    texto = urllib.parse.quote(mensagem)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={texto}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-    gui.leftClick(x=141, y=141)
-    gui.press('backspace', presses = 15)
-    gui.press('delete', presses = 15)
-    gui.leftClick(x=141, y=141)
-    gui.PAUSE = 2
-    gui.write(numero)
-    gui.press('enter')
-    gui.leftClick(x=755, y=980)
-    gui.PAUSE = 2
-    gui.write(mensagem)
-    gui.press('enter')
-    """
-
-def cob_prazo(nome, dia_atual, numero):
-    print(f"Lolllllllll {nome} is loko on the {numero}")
-    '''
+def cob_prazo(nome, dia_atual, numero_, navegador):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
+    numero = "55" + numero_
     mensage = (f"{Horari} {pronom[0]}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
+ 
+    text = urllib.parse.quote(mensage)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={text}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-    gui.leftClick(x=141, y=141)
-    gui.press('backspace', presses = 15)
-    gui.press('delete', presses = 15)
-    gui.leftClick(x=141, y=141)
-    gui.PAUSE = 2
-    gui.write(numero)
-    gui.press('enter')
-    gui.leftClick(x=755, y=980)
-    gui.PAUSE = 2
-    gui.write(mensage)
-    gui.press('enter')
-    '''
-
-def cobrar_selected(nome, numero):
-    print(f"Lolllllllll {nome} is loko on the {numero}")
-    '''
+def cobrar_selected(nome, numero_, navegador):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
+    numero = "55" + numero_
     mensage = (f"{Horari} {pronom[0]}, conforme combinado, aguardo pagamento")   
+ 
+    text = urllib.parse.quote(mensage)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={text}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-    gui.leftClick(x=141, y=141)
-    gui.press('backspace', presses = 15)
-    gui.press('delete', presses = 15)
-    gui.leftClick(x=141, y=141)
-    gui.PAUSE = 2
-    gui.write(numero)
-    gui.press('enter')
-    gui.leftClick(x=755, y=980)
-    gui.PAUSE = 2
-    gui.write(mensage)
-    gui.press('enter')
-    '''
+def cobrar_posiçao(nome, numero_, navegador):
+    nom = nome.split(" ")
+    primeir_nome = nom[0].capitalize()
+    pronom = get_gender(primeir_nome)
+    Horari = get_time()
+    numero = "55" + numero_
+    mensage = (f"{Horari} {pronom[0]}, alguma posição?")   
+ 
+    text = urllib.parse.quote(mensage)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={text}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    time.sleep(5) 
 
 #Basic info funcions -----
 def get_gender(prompt):
@@ -176,5 +179,32 @@ def who_acd(obs_dev):
         else:
             return "WOW whats fucking up now"
 
+def real_logic(shit):
+    shit = bool(re.search("R$", shit))
+    if shit == True:
+        return True
+    elif shit == False:
+        return False
+
+#tests get_gender, and selenium whatsapp message
 if __name__ == "__main__":
-    pass
+    navegador = webdriver.Chrome()
+    navegador.get("https://web.whatsapp.com/")
+
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+
+    dia_atual = datetime.datetime.now().strftime("%d/%m/20%y") 
+    teste = ["João", "5511954599589"]
+    pronome = get_gender(teste[0])
+    Horario = get_time()
+    numero = teste[1]
+    mensagem = (f"{Horario} {pronome[0]}, nesse dia {dia_atual}, {pronome[2]} {pronome[0]} esta testando as funções de mensagem automatica seu otario")  
+    texto = urllib.parse.quote(mensagem)
+    link = f"https://web.whatsapp.com/send?phone={numero}&text={texto}"
+    navegador.get(link)
+    while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        time.sleep(1)
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    time.sleep(5) 
+    
