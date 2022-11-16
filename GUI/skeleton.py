@@ -382,6 +382,35 @@ def cob_dia(table):
                                         messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
                                         acordo_cobdesl.append(nome)
                                         pass
+                elif pago == 2:
+                    if cobrar_ == 1:
+                        numero = comp(nome) 
+                        if numero == None:
+                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
+                                        acordo_cobdesl.append(nome)
+                        else:
+                            acordo_hj.append(nome)
+                            if forms == True:
+                                if who_acd(obs_dev) == True:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
+                                        cob_prazo(nome, dia_atual, numero, navegador)  
+                                        print(f"{nome} cobrado(a)")  
+                                elif who_acd(obs_dev) == False:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
+                                        cob_prazo(formando, dia_atual, numero, navegador)  
+                                        print(f"{nome} cobrado(a)") 
+                            else:
+                                        print("----------------------------------------------------------------------------------")
+                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
+                                        cob_prazo(nome, dia_atual, numero, navegador)  
+                                        print(f"{nome} cobrado(a)")
+                    elif cobrar_ == 0:
+                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
+                                        acordo_cobdesl.append(nome)
+                                        pass
+                      
                 elif pago == 1:
                     pass
 
@@ -539,8 +568,26 @@ def update_record(table):
         selected = my_tree.focus()
         clumber = ''.join([x for x in dt_entry.get() if x.isdigit()])
         clomber = str(datetime.datetime.strptime(clumber, '%d%m%Y'))
-        my_tree.item(selected, text="", values=(rowid_entry.get(), n_entry.get(), clomber, pz_entry.get(), val_entry.get(), cbr.get(), pg.get(), obs_entry.get()))
 
+        #error handlings for Entry widgets
+        try:
+            valor_float = val_entry.get()
+            valor_float = float(valor_float)
+        except ValueError:
+            messagebox.showinfo("Invalido", "Valor precisa ser um numero")
+            raise TypeError("Only integers are allowed")
+
+        try:
+            int(cbr.get())
+            int(pg.get())
+        except ValueError:
+            messagebox.showinfo("Invalido", "Valor precisa ser um numero")
+            raise TypeError("Only integers are allowed")
+
+
+
+        my_tree.item(selected, text="", values=(rowid_entry.get(), n_entry.get(), clomber, pz_entry.get(), valor_float, cbr.get(), pg.get(), obs_entry.get()))
+        
         conn = sqlite3.connect('agenda.db')
         c = conn.cursor()
 
@@ -592,7 +639,102 @@ def comp(nome):#queries Mluz db.
                                 loko = num_acd(obs_dev, forms)
                                 return loko
 
-def get_excel(table): # make button
+def get_excel(table):
+    directory = filedialog.askdirectory()
+
+    pg_lol = []
+    normal_lol = []
+    columns = ['Nome', 'Data', 'Prazo', 'Valor', 'Pago', 'Obs']
+
+    conn = sqlite3.connect('agenda.db')
+    c = conn.cursor()
+    c.execute(f"SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} ORDER BY pago DESC, data")
+    records = c.fetchall()
+    for record in records:
+                important_shit = {'nome': [], 
+                    'data': [],
+                    'prazo': [],
+                    'valor': [],
+                    'pago': [],
+                    'obs': [],
+                    'style':[]}
+                    
+                pg_shit = {'nome': [],
+                    'data': [],
+                    'prazo': [],
+                    'valor': [],
+                    'pago': [],
+                    'obs': [],
+                    'style':[]}
+
+                currency_string = "R${:,.2f}".format(record[4])
+
+                if record[6] == 2:
+                    #mes passado atrasado, para organizando
+                    important_shit['nome'].append(record[1])
+                    important_shit['data'].append(record[2])
+                    important_shit['prazo'].append(record[3])
+                    important_shit['valor'].append(currency_string)
+                    important_shit['pago'].append("sim")
+                    important_shit['obs'].append(record[6])
+                    important_shit['style'].append(2)
+                    normal_lol.append(important_shit)
+                    
+                elif record[6] == 1:
+                    #acordo pago 
+                    pg_shit['nome'].append(record[1])
+                    pg_shit['data'].append(record[2])
+                    pg_shit['prazo'].append(record[3])
+                    pg_shit['valor'].append(currency_string)
+                    pg_shit['pago'].append("nao")
+                    pg_shit['obs'].append(record[6])
+                    pg_shit['style'].append(1)
+                    pg_lol.append(pg_shit)
+                    
+                else:
+                    #acordo normal
+                    important_shit['nome'].append(record[1])
+                    important_shit['data'].append(record[2])
+                    important_shit['prazo'].append(record[3])
+                    important_shit['valor'].append(currency_string)
+                    important_shit['pago'].append("sim")
+                    important_shit['obs'].append(record[6])
+                    important_shit['style'].append(0)
+                    normal_lol.append(important_shit)
+    conn.commit()
+    conn.close()
+
+    nomes = []
+    data = []
+    prazo = []
+    valor = []
+    pago = []
+    obs = []
+
+    for put in pg_lol:
+        nomes.append(put['nome'][0])
+        data.append(put['data'][0])
+        prazo.append(put['prazo'][0])
+        valor.append(put['valor'][0])
+        pago.append(put['pago'][0])
+        obs.append(put['obs'][0])
+        
+    
+    for lol in normal_lol:
+        nomes.append(lol['nome'][0])
+        data.append(lol['data'][0])
+        prazo.append(lol['prazo'][0])
+        valor.append(lol['valor'][0])
+        pago.append(lol['pago'][0])
+        obs.append(lol['obs'][0])
+        
+    dolf = pd.DataFrame(list(zip(nomes,data,prazo,valor,pago,obs)), columns=columns)
+    #df.style.text_gradient(subset=["E"], cmap="green", vmin=0, vmax=2.5)
+    print(dolf)
+
+    exit_file = str(directory + f"/analise_{table}.xlsx")
+    dolf.to_excel(exit_file, index=False)
+    messagebox.showinfo("Salvo!", "Arquivo salvo no local selecionado")
     pass
 
 #Unmade deals page and function especifics.
@@ -871,11 +1013,13 @@ def query_database(table):
         c.execute(f"SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} ORDER BY pago DESC, data")
         records = c.fetchall()
         for record in records:
+                my_tog='puss' if record[6] == 2 else 'fail'
                 my_tag='pass' if record[6] == 1 else 'fail' 
                 looo = record[4]
                 currency_string = "R${:,.2f}".format(looo)
-                my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3], currency_string, record[5], record[6], record[7]), tags=my_tag)
+                my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3], currency_string, record[5], record[6], record[7]), tags=[my_tag, my_tog])
                 my_tree.tag_configure('pass', background='lightgreen')
+                my_tree.tag_configure('puss', background='tomato')
                     
         conn.commit()
         conn.close()
