@@ -25,7 +25,7 @@ def cobrar(nome, dia_atual, numero_, navegador):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
 def cob_prazo(nome, dia_atual, numero_, navegador):
@@ -41,7 +41,7 @@ def cob_prazo(nome, dia_atual, numero_, navegador):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
 def cobrar_selected(nome, numero_, navegador):
@@ -57,7 +57,7 @@ def cobrar_selected(nome, numero_, navegador):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
 def cobrar_posiçao(nome, numero_, navegador):
@@ -108,7 +108,7 @@ def get_time():
     currentTime  = int(time.strftime('%H')) 
     if currentTime < 12 :
         return('Bom dia')
-    if currentTime > 12 :
+    if currentTime >= 12 :
         return('Boa tarde')
     if currentTime > 6 :
         return('Boa noite')
@@ -139,8 +139,8 @@ def a_form(formando):
 
 def num_acd(obs,forms):
     if forms == True:
-        n_form = re.compile(r'(N_form:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
-        n_dev = re.compile(r'(N_dev:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_form = re.compile(r'(N_form:|n_Form:|N_Form:|n_form:|N_FORM:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
+        n_dev = re.compile(r'(N_dev:|n_Dev:|N_Dev:|n_dev:|N_DEV:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})')
         whom_acd = who_acd(obs)
         #true is devedor
         if whom_acd == True:
@@ -156,9 +156,7 @@ def num_acd(obs,forms):
                 global num_forms
                 num_forms = match_form[1]
                 return num_forms
-        #global numbers_geral
-        #numbers_geral = [num_dev, num_forms]
-        #can be called
+
     elif forms == False:
         n_unico = re.compile(r"(N:|n:) ((?:\+?\d{2,3}[ ]{0,4})?(?:(?:\(0?\d{2}\)|0?\d{2})[ ]{0,4})?(?:9[ .-]?)?\d{4}[ .-]?\d{4})")
         matches_Dev = n_unico.findall(obs)
