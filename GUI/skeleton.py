@@ -16,6 +16,9 @@ from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selec
 
 import pandas as pd
 
+#ADD DEL FUNCTION TO UNMADE DEAL DB,  WHY DOES IT NOT SAVE THE DATE? IT GIVES ERRO MESSEGE THAT IT'S NOT RIGHT FORMAT
+#make function for final de semana skip
+
 #----Defining tables, treviews and buttons-----------------------------------------------------
 #****** Main page: ******
 root = Tk()
@@ -125,6 +128,7 @@ def add_acordo(table):
         my_tree.delete(*my_tree.get_children())
         query_database(table)
         pass
+
 
 def open_selected(mes):#This is page
     try:
@@ -257,7 +261,7 @@ def open_selected(mes):#This is page
         print('SQLite error: %s' % (' '.join(er.args)))
         print("Exception class is: ", er.__class__)
         messagebox.showerror("Table not diffined", "A agenda desse mes não foi definida, caso queira a defina adicionando um mes")
-    
+   
 def select_record(e):
         # Clear entry boxes n_entry, val_entry, dt_entry, pz_entry, pg, cbr, obs_entry
         clear_entries()
@@ -322,7 +326,7 @@ def cob_dia(table):
             cobrar_ = record[4]
 
             if dia_atual == data:
-                if pago == 0:
+                if pago == 0 or pago ==2:
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
@@ -354,7 +358,7 @@ def cob_dia(table):
                     pass
 
             if dia_atual == prazo:
-                if pago == 0:
+                if pago == 0 or pago ==2:
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
@@ -382,35 +386,6 @@ def cob_dia(table):
                                         messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
                                         acordo_cobdesl.append(nome)
                                         pass
-                elif pago == 2:
-                    if cobrar_ == 1:
-                        numero = comp(nome) 
-                        if numero == None:
-                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
-                                        acordo_cobdesl.append(nome)
-                        else:
-                            acordo_hj.append(nome)
-                            if forms == True:
-                                if who_acd(obs_dev) == True:
-                                        print("----------------------------------------------------------------------------------")
-                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cob_prazo(nome, dia_atual, numero, navegador)  
-                                        print(f"{nome} cobrado(a)")  
-                                elif who_acd(obs_dev) == False:
-                                        print("----------------------------------------------------------------------------------")
-                                        print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cob_prazo(formando, dia_atual, numero, navegador)  
-                                        print(f"{nome} cobrado(a)") 
-                            else:
-                                        print("----------------------------------------------------------------------------------")
-                                        print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                        cob_prazo(nome, dia_atual, numero, navegador)  
-                                        print(f"{nome} cobrado(a)")
-                    elif cobrar_ == 0:
-                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
-                                        acordo_cobdesl.append(nome)
-                                        pass
-                      
                 elif pago == 1:
                     pass
 
@@ -666,41 +641,26 @@ def get_excel(table):
                     'pago': [],
                     'obs': [],
                     'style':[]}
-
-                currency_string = "R${:,.2f}".format(record[4])
-
-                if record[6] == 2:
-                    #mes passado atrasado, para organizando
-                    important_shit['nome'].append(record[1])
-                    important_shit['data'].append(record[2])
-                    important_shit['prazo'].append(record[3])
-                    important_shit['valor'].append(currency_string)
-                    important_shit['pago'].append("sim")
-                    important_shit['obs'].append(record[6])
-                    important_shit['style'].append(2)
-                    normal_lol.append(important_shit)
                     
-                elif record[6] == 1:
+                if record[6] == 1:
                     #acordo pago 
-                    pg_shit['nome'].append(record[1])
-                    pg_shit['data'].append(record[2])
-                    pg_shit['prazo'].append(record[3])
-                    pg_shit['valor'].append(currency_string)
-                    pg_shit['pago'].append("nao")
-                    pg_shit['obs'].append(record[6])
-                    pg_shit['style'].append(1)
-                    pg_lol.append(pg_shit)
-                    
+                        pg_shit['nome'].append(record[1])
+                        pg_shit['data'].append(record[2])
+                        pg_shit['prazo'].append(record[3])
+                        pg_shit['valor'].append(record[4])
+                        pg_shit['pago'].append(1)
+                        pg_shit['obs'].append(record[7])
+                        pg_shit['style'].append(1)
+                        pg_lol.append(pg_shit)
                 else:
-                    #acordo normal
-                    important_shit['nome'].append(record[1])
-                    important_shit['data'].append(record[2])
-                    important_shit['prazo'].append(record[3])
-                    important_shit['valor'].append(currency_string)
-                    important_shit['pago'].append("sim")
-                    important_shit['obs'].append(record[6])
-                    important_shit['style'].append(0)
-                    normal_lol.append(important_shit)
+                        important_shit['nome'].append(record[1])
+                        important_shit['data'].append(record[2])
+                        important_shit['prazo'].append(record[3])
+                        important_shit['valor'].append(record[4])
+                        important_shit['pago'].append(record[6])
+                        important_shit['obs'].append(record[7])
+                        important_shit['style'].append(2)
+                        normal_lol.append(important_shit)
     conn.commit()
     conn.close()
 
@@ -719,7 +679,6 @@ def get_excel(table):
         pago.append(put['pago'][0])
         obs.append(put['obs'][0])
         
-    
     for lol in normal_lol:
         nomes.append(lol['nome'][0])
         data.append(lol['data'][0])
@@ -857,7 +816,7 @@ def update_table_un(table):
 def add_month(): #this is the page
     global inf
     inf = Toplevel()
-    inf.title("Adicionar e-mail")
+    inf.title("Adicionar arquivo")
     inf.geometry("650x400")
     inf.minsize(650, 400)
     inf.maxsize(1200, 800)
@@ -899,7 +858,6 @@ def add_month(): #this is the page
     label.pack(pady=0, padx=0)
    
 def select_file():
-    #adds file to screan
     global filename
     filename = filedialog.askopenfilename(title="Open a File", filetype=(("All Files", "*.*"), ("xlrd files", ".*xlrd"), ("xlxs files", ".*xlsx")))
     if filename:
@@ -907,7 +865,6 @@ def select_file():
                 filename = r"{}".format(filename)
                 global df
                 df = pd.read_excel(filename, dtype=str)
-                #df["Vencprev"] = pd.to_datetime(df["Vencprev"]).dt.strftime("%d/%m/20%y")
             except ValueError:
                 label.config(text="File could not be opened", pady=20, ipady=10)
             except FileNotFoundError:
@@ -947,40 +904,15 @@ def adding_month(selection, filename):
     if result == 0:
         messagebox.showinfo("Adding data", "Adding data from selected excel file")
         l = df.values.tolist()
+        l_len = len(df.columns)
         n_rows = int(len(l))
-        df['prazo']=['null' for i in range(n_rows)]
-        df['cob']=[1 for i in range(n_rows)]
-        df['pago']=[0 for i in range(n_rows)]
-        df['obs']=['null' for i in range(n_rows)]
-        l = df.values.tolist()
         cunt = conn.cursor()
-        for _ in l:
-            cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
-                    {
-                    'nome': _[0],
-                    'data': _[1],
-                    'prazo': _[3],
-                    'valor': _[2],
-                    'cob':_[4],
-                    'pago': _[5],
-                    'obs': _[6]
-                    })
-                    
-            conn.commit()
-    elif result >= 1:
-        response = messagebox.askyesno("Table has data", "This table already has data inside, would you like to replace current data?")
-        if response == 1:
-            drop_table(selection)
-            create_table(selection)
-            l = df.values.tolist()
-            n_rows = int(len(l))
+        if l_len == 3:
             df['prazo']=['null' for i in range(n_rows)]
             df['cob']=[1 for i in range(n_rows)]
             df['pago']=[0 for i in range(n_rows)]
             df['obs']=['null' for i in range(n_rows)]
             l = df.values.tolist()
-            conn = sqlite3.connect('agenda.db')
-            cunt = conn.cursor()
             for _ in l:
                 cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
                         {
@@ -992,6 +924,65 @@ def adding_month(selection, filename):
                         'pago': _[5],
                         'obs': _[6]
                         })
+                conn.commit()
+        elif l_len == 6:
+            df['cob']=[1 for i in range(n_rows)]
+            l = df.values.tolist()
+            for _ in l:
+                cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
+                        {
+                        'nome': _[0],
+                        'data': _[1],
+                        'prazo': _[2],
+                        'valor': _[3],
+                        'cob':_[6],
+                        'pago': _[4],
+                        'obs': _[5]
+                        })
+                        
+                conn.commit()
+    elif result >= 1:
+        response = messagebox.askyesno("Table has data", "This table already has data inside, would you like to replace current data?")
+        if response == 1:
+            drop_table(selection)
+            create_table(selection)
+            l = df.values.tolist()
+            l_len = len(df.columns)
+            n_rows = int(len(l))
+            cunt = conn.cursor()
+            if l_len == 3:
+                df['prazo']=['null' for i in range(n_rows)]
+                df['cob']=[1 for i in range(n_rows)]
+                df['pago']=[0 for i in range(n_rows)]
+                df['obs']=['null' for i in range(n_rows)]
+                l = df.values.tolist()
+                for _ in l:
+                    cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
+                        {
+                        'nome': _[0],
+                        'data': _[1],
+                        'prazo': _[3],
+                        'valor': _[2],
+                        'cob':_[4],
+                        'pago': _[5],
+                        'obs': _[6]
+                        })
+                    conn.commit()
+            elif l_len == 6:
+                df['cob']=[1 for i in range(n_rows)]
+                l = df.values.tolist()
+                for _ in l:
+                    cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
+                        {
+                        'nome': _[0],
+                        'data': _[1],
+                        'prazo': _[2],
+                        'valor': _[3],
+                        'cob':_[6],
+                        'pago': _[4],
+                        'obs': _[5]
+                        })
+                        
                 conn.commit()
         if response == 0:
                 pass
