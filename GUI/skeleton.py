@@ -16,7 +16,6 @@ from func import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selec
 
 import pandas as pd
 
-#ADD DEL FUNCTION TO UNMADE DEAL DB,  WHY DOES IT NOT SAVE THE DATE? IT GIVES ERRO MESSEGE THAT IT'S NOT RIGHT FORMAT
 #make function for final de semana skip
 
 #----Defining tables, treviews and buttons-----------------------------------------------------
@@ -26,10 +25,6 @@ root.title("Agenda BETA 1.0")
 root.geometry("430x400")
 root.minsize(430, 400)
 root.maxsize(430, 400)
-
-#Style 
-style = ttk.Style()
-style.theme_use('default')
 
 main_title = Label(root, text="Agenda 2022", anchor=CENTER, padx=3, pady=2, font=("Times New Roman", 25))
 main_title.grid(column=0, row=0, columnspan = 3, ipadx=100, ipady=50)
@@ -128,7 +123,6 @@ def add_acordo(table):
         my_tree.delete(*my_tree.get_children())
         query_database(table)
         pass
-
 
 def open_selected(mes):#This is page
     try:
@@ -263,20 +257,16 @@ def open_selected(mes):#This is page
         messagebox.showerror("Table not diffined", "A agenda desse mes não foi definida, caso queira a defina adicionando um mes")
    
 def select_record(e):
-        # Clear entry boxes n_entry, val_entry, dt_entry, pz_entry, pg, cbr, obs_entry
         clear_entries()
-        # Grab record Number
         selected = my_tree.focus()
-        # Grab record values
         values = my_tree.item(selected, 'values')
         valor_shit = real_logic(values[4])
-        #if valor_shit == True:
+
         try:
             cleber = values[4].replace('R$', '')
         except:
             valor_shit == False
 
-        # outpus to entry boxes
         rowid_entry.insert(0, values[0]) 
         n_entry.insert(0, values[1])
         dt_entry.insert(0, values[2])
@@ -287,7 +277,6 @@ def select_record(e):
         obs_entry.insert(0, values[7])
 
 def clear_entries():
-        # Clear entry boxes
         rowid_entry.delete(0, END)
         n_entry.delete(0, END)
         dt_entry.delete(0, END)
@@ -421,8 +410,8 @@ caso sim, tenha o celular em mãos""")
                 nome_ = olo[0]
                 numero = comp(nome_[1]) 
                 if numero == None:
-                    messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
-                    acords_bruhh.append(nome_[1])
+                            messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
+                            acords_bruhh.append(nome_[1])
                 else:
                     acordos_selec.append(nome_[1])
                     if forms == True:
@@ -474,8 +463,8 @@ caso sim, tenha o celular em mãos""")
                 nome_ = olo[0]
                 numero = comp(nome_[1]) 
                 if numero == None:
-                    messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
-                    acords_bruhh.append(nome_[1])
+                            messagebox.showwarning("Sem numero", f"O caso {nome_[1]} esta sem numero de whatsapp")
+                            acords_bruhh.append(nome_[1])
                 else:
                     acordos_selec.append(nome_[1])
                     if forms == True:
@@ -501,43 +490,49 @@ casos que não foi possivel cobrar:
 {acords_bruhh}""")
 
 def del_and_sort(table):
-            acd_dele = str(table + "_unmade")
-            x = my_tree.selection()[0]
-            my_tree.delete(x)
+            response = messagebox.askyesno("Voce tem certeza?", " Voce tem certerza que quer desfazer acordo e adicionar a lista de desfeitos?")
+            if response == 1:
+                        acd_dele = str(table + "_unmade")
+                        x = my_tree.selection()[0]
+                        my_tree.delete(x)
 
-            conn = sqlite3.connect('agenda.db')
-            c_ = conn.cursor()
-            c_.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, valor, obs FROM {table} WHERE rowid =" + rowid_entry.get())
-            record_del = c_.fetchall()
-            for lol in record_del:
-                __nome = lol[0]
-                __data = lol[1]
-                __valor = lol[2]
-                __obs = lol[3]
+                        conn = sqlite3.connect('agenda.db')
+                        c_ = conn.cursor()
+                        c_.execute(f"SELECT nome, data, valor, obs FROM {table} WHERE rowid =" + rowid_entry.get())
+                        record_del = c_.fetchall()
+                        for lol in record_del:
+                            __nome = lol[0]
+                            __data = lol[1]
+                            __valor = lol[2]
+                            __obs = lol[3]
 
-            c_.execute(f"INSERT INTO {acd_dele} VALUES (:nome, :data, :valor, :obs)", 
-                    {
-                    'nome': __nome,
-                    'data': __data,
-                    'valor': __valor,
-                    'obs': __obs
-                    })
-            conn.commit()
-            conn.close()
+                        c_.execute(f"INSERT INTO {acd_dele} VALUES (:nome, :data, :valor, :obs)", 
+                                {
+                                'nome': __nome,
+                                'data': __data,
+                                'valor': __valor,
+                                'obs': __obs
+                                })
+                        conn.commit()
+                        conn.close()
 
-            conn_db(f"DELETE from {table} WHERE oid=" + rowid_entry.get()) 
+                        conn_db(f"DELETE from {table} WHERE oid=" + rowid_entry.get()) 
 
-            clear_entries()
-            messagebox.showinfo("Deleted!", "Your record  has been deleted fag")
-            pass
+                        clear_entries()
+                        messagebox.showinfo("Deleted!", "Caso foi deletado e adicionado a lista de desfeitos do mes!")
+            else:
+                        pass
             
 def del_no_sort(table):
-        x = my_tree.selection()[0]
-        my_tree.delete(x)
-        conn_db(f"DELETE from {table} WHERE oid=" + rowid_entry.get()) 
-        clear_entries()
-        #add litle message box for fun
-        messagebox.showinfo("Deleted!", "Your record  has been deleted fag")
+        response = messagebox.askyesno("Voce tem certeza?", " Voce tem certerza que quer desfazer acordo sem organizar?")
+        if response == 1:
+            x = my_tree.selection()[0]
+            my_tree.delete(x)
+            conn_db(f"DELETE from {table} WHERE oid=" + rowid_entry.get()) 
+            clear_entries()
+            messagebox.showinfo("Deleted!", "O caso foi deletado sem organizar!")
+        else:
+            pass
    
 def update_record(table):
         selected = my_tree.focus()
@@ -551,7 +546,6 @@ def update_record(table):
         except ValueError:
             messagebox.showinfo("Invalido", "Valor precisa ser um numero")
             raise TypeError("Only integers are allowed")
-
         try:
             int(cbr.get())
             int(pg.get())
@@ -559,13 +553,10 @@ def update_record(table):
             messagebox.showinfo("Invalido", "Valor precisa ser um numero")
             raise TypeError("Only integers are allowed")
 
-
-
         my_tree.item(selected, text="", values=(rowid_entry.get(), n_entry.get(), clomber, pz_entry.get(), valor_float, cbr.get(), pg.get(), obs_entry.get()))
         
         conn = sqlite3.connect('agenda.db')
         c = conn.cursor()
-
         c.execute(f"""UPDATE {table} SET
             nome = :nome,
             data = :data,
@@ -616,7 +607,6 @@ def comp(nome):#queries Mluz db.
 
 def get_excel(table):
     directory = filedialog.askdirectory()
-
     pg_lol = []
     normal_lol = []
     columns = ['Nome', 'Data', 'Prazo', 'Valor', 'Pago', 'Obs']
@@ -688,9 +678,6 @@ def get_excel(table):
         obs.append(lol['obs'][0])
         
     dolf = pd.DataFrame(list(zip(nomes,data,prazo,valor,pago,obs)), columns=columns)
-    #df.style.text_gradient(subset=["E"], cmap="green", vmin=0, vmax=2.5)
-    print(dolf)
-
     exit_file = str(directory + f"/analise_{table}.xlsx")
     dolf.to_excel(exit_file, index=False)
     messagebox.showinfo("Salvo!", "Arquivo salvo no local selecionado")
@@ -698,7 +685,6 @@ def get_excel(table):
 
 #Unmade deals page and function especifics.
 def open_list(mes): #unmade acds page
-        # open small window if list of descumprido acordos
         unmade = Toplevel()
         screen_width = unmade.winfo_screenwidth()
         screen_height = unmade.winfo_screenheight()
@@ -706,21 +692,17 @@ def open_list(mes): #unmade acds page
         global my_tree_unmade
         tree_frame_unmade = Frame(unmade)
         tree_frame_unmade.pack(ipady=180, ipadx=350)
-        # Create a Treeview Scrollbar
+
+        #Scrollbar
         tree_scroll_un = Scrollbar(tree_frame_unmade)
         tree_scroll_un.pack(side=RIGHT, fill=Y)
- 
-        # Create The Treeview
+
         my_tree_unmade = ttk.Treeview(tree_frame_unmade, yscrollcommand=tree_scroll_un.set, selectmode="extended", height=40) #25
         my_tree_unmade.pack()
-
-        # Configure the Scrollbar
         tree_scroll_un.config(command=my_tree.yview)
-
-        # Define Our Columns
         my_tree_unmade['columns'] = ("rowid", "nome", "data", "valor", "obs")
 
-        # Format Our Columns
+        # Format columns
         my_tree_unmade.column("#0", width=0, stretch=NO)
         my_tree_unmade.column("rowid", width=0, stretch=NO)
         my_tree_unmade.column("nome", anchor=W, width=300)
@@ -738,7 +720,7 @@ def open_list(mes): #unmade acds page
 
         global rowid_entry_un, n_entry_un, obs_entry_un
         data_frame_un = LabelFrame(unmade, text="Record")
-        data_frame_un.place(x=100,y=850,height=60,width=1620)
+        data_frame_un.place(x=100,y=850,height=60,width=1650)
 
         rowid_entry_un = Entry(data_frame_un)
 
@@ -752,25 +734,35 @@ def open_list(mes): #unmade acds page
         obs_entry_un = Entry(data_frame_un)
         obs_entry_un.grid(row=0, column=3, ipadx=350, padx=5)
 
-        update_btn = Button(data_frame_un, text="Update change", command=lambda: update_table_un(mes),anchor= CENTER)
-        update_btn.grid(row=0, column=4, padx=15)
+        update_btn = Button(data_frame_un, text="Aplicar mudança", command=lambda: update_table_un(mes),anchor= CENTER)
+        update_btn.grid(row=0, column=4, padx=10)
+
+        del_un_btn = Button(data_frame_un, text="Delete", command=lambda: del_no_sort_un(mes),anchor= CENTER)
+        del_un_btn.grid(row=0, column=5)
 
         update_btn = Button(data_frame_un, text="Get Excel", command=lambda: get_excel_un(mes),anchor= CENTER)
-        update_btn.grid(row=0, column=5, padx=15)
+        update_btn.grid(row=0, column=6, padx=10)
 
         my_tree_unmade.bind("<ButtonRelease-1>", select_record_un)
-
         query_db_unmade(mes)
         pass
 
+def del_no_sort_un(table):
+        response = messagebox.askyesno("Voce tem certeza?", " Voce tem certerza que quer desfazer acordo desfeito da lista?")
+        if response == 1:
+            table_un = table + "_unmade"
+            x = my_tree_unmade.selection()[0]
+            my_tree_unmade.delete(x)
+            conn_db(f"DELETE from {table_un} WHERE oid=" + rowid_entry_un.get()) 
+            clear_entries_un()
+            messagebox.showinfo("Deleted!", "O caso foi deletado!")
+        else:
+            pass
+   
 def select_record_un(e):
-        # Clear entry boxes n_entry, val_entry, dt_entry, pz_entry, pg, cbr, obs_entry
         clear_entries_un()
-        # Grab record Number
-        selected = my_tree_unmade.focus()
-        # Grab record values
-        values_ = my_tree_unmade.item(selected, 'values')
-        # outpus to entry boxes
+        selected_ = my_tree_unmade.focus()
+        values_ = my_tree_unmade.item(selected_, 'values')
 
         rowid_entry_un.insert(0, values_[0]) 
         n_entry_un.insert(0, values_[1])
@@ -782,7 +774,43 @@ def clear_entries_un():
     pass
 
 def get_excel_un(table):
-    pass
+    directory_un = filedialog.askdirectory()
+    table_un = table + "_unmade"
+    columns = ['Nome', 'Data', 'Valor', 'Obs']
+    list_un = []
+
+    conn = sqlite3.connect('agenda.db')
+    c = conn.cursor()
+    c.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, valor, obs FROM {table_un} ORDER BY data DESC")
+    records = c.fetchall()
+    for record in records:
+        dict_bruh = {'nome': [], 
+                    'data': [],
+                    'valor': [],
+                    'obs': []}
+        
+        dict_bruh['nome'].append(record[0])
+        dict_bruh['data'].append(record[1])
+        dict_bruh['valor'].append(record[2])
+        dict_bruh['obs'].append(record[3])
+        list_un.append(dict_bruh)
+    conn.commit()
+    conn.close()
+
+    nomes_un = []
+    data_un = []
+    valor_un = []
+    obs_un = []
+    for putt in list_un:
+        nomes_un.append(putt['nome'][0])
+        data_un.append(putt['data'][0])
+        valor_un.append(putt['valor'][0])
+        obs_un.append(putt['obs'][0])
+
+    dolf_un = pd.DataFrame(list(zip(nomes_un,data_un,valor_un,obs_un)), columns=columns)
+    exit_file = str(directory_un + f"/analise_{table_un}.xlsx")
+    dolf_un.to_excel(exit_file, index=False)
+    messagebox.showinfo("Salvo!", "Arquivo salvo no local selecionado")
 
 def clear_all_un():
    for item in my_tree_unmade.get_children():
@@ -821,16 +849,15 @@ def add_month(): #this is the page
     inf.minsize(650, 400)
     inf.maxsize(1200, 800)
 
-    #select arquivo e treeview
     open_btn = Button(inf, text="Selecione arquivo a adicionar", command=select_file, padx=3, pady=2, anchor= S)
     open_btn.pack()
     frame = Frame(inf, highlightbackground="black", highlightthickness=2.)
     frame.pack()
-    # Create a Treeview widget
+
     global tree
     tree = ttk.Treeview(frame)
 
-    #month options:
+
     global options_M
     options_M = [
     "Januery", 
@@ -869,18 +896,14 @@ def select_file():
                 label.config(text="File could not be opened", pady=20, ipady=10)
             except FileNotFoundError:
                 label.config(text="File Not Found",pady=20, ipady=10)
-    # Clear all the previous data in tree
     clear_treeview()
 
-    # Add new data in Treeview widget
     tree["column"] = list(df.columns)
     tree["show"] = "headings"
 
-    # For Headings iterate over the columns
     for col in tree["column"]:
         tree.heading(col, text=col)
 
-    # Put Data in Rows
     df_rows = (df.to_numpy().tolist())
     for row in df_rows:
         tree.insert("", "end", values=row)
@@ -1050,7 +1073,6 @@ def drop_table(table):
         conn_db(f'DROP TABLE {table}')
         conn_db(f'DROP TABLE {str(table + "_unmade")}')
         main.destroy()
-        #create_table(options_M)
     if response == 0:
             pass
 
