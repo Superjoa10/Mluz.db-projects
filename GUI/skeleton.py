@@ -1025,11 +1025,21 @@ def query_database(table):
         c.execute(f"SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} ORDER BY pago DESC, data")
         records = c.fetchall()
         for record in records:
+                current_data = datetime.datetime.strptime(record[2], "%d/%m/%Y")
+                weekcheck = datetime.datetime.strptime(record[2], "%d/%m/%Y").strftime("%A")
+                if weekcheck == "Saturday":
+                      tree_data_ = current_data + datetime.timedelta(days=2)
+                      tree_data = tree_data_.strftime("%d/%m/%Y")
+                elif weekcheck == "Sunday":
+                      tree_data_ = current_data + datetime.timedelta(days=1)
+                      tree_data = tree_data_.strftime("%d/%m/%Y")
+                else:
+                    tree_data = record[2]
                 my_tog='puss' if record[6] == 2 else 'fail'
                 my_tag='pass' if record[6] == 1 else 'fail' 
                 looo = record[4]
                 currency_string = "R${:,.2f}".format(looo)
-                my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3], currency_string, record[5], record[6], record[7]), tags=[my_tag, my_tog])
+                my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], tree_data, record[3], currency_string, record[5], record[6], record[7]), tags=[my_tag, my_tog])
                 my_tree.tag_configure('pass', background='lightgreen')
                 my_tree.tag_configure('puss', background='tomato')
                     
