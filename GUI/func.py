@@ -44,14 +44,16 @@ def cob_prazo(nome, dia_atual, numero_, navegador):
     navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
-def cobrar_selected(nome, numero_, navegador):
+def cobrar_selected(nome, numero_, navegador, response):
     nom = nome.split(" ")
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
     numero = "55" + numero_
-    mensage = (f"{Horari} {pronom[0]}, conforme combinado, aguardo pagamento")   
- 
+    if response == 1:
+        mensage = (f"{Horari} {pronom[0]}, conforme acordo, aguardo pagamento")
+    elif response == 2:
+        mensage = (f"{Horari} {pronom[0]}, conforme prazo, aguardo pagamento")
     text = urllib.parse.quote(mensage)
     link = f"https://web.whatsapp.com/send?phone={numero}&text={text}"
     navegador.get(link)
