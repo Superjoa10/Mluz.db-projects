@@ -303,7 +303,7 @@ def cob_dia(table):
         dia_atual = datetime.datetime.now().strftime("%d/%m/20%y")
         conn = sqlite3.connect('agenda.db')
         c = conn.cursor()
-        c.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, pago , cob FROM {table} ORDER BY pago ASC")
+        c.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, pago , cob, obs FROM {table} ORDER BY pago ASC")
         records = c.fetchall()
         for record in records:
             nome = record[0]
@@ -311,14 +311,16 @@ def cob_dia(table):
             prazo = record[2]
             pago = record[3]
             cobrar_ = record[4]
+            obs = record[5]
 
             if dia_atual == data:
                 if pago == 0 or pago ==2:
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
-                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
-                                        acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
+                                        dicto = {'nome': nome, 'obs': obs}
+                                        acordo_cobdesl.append(dicto)
                         else:
                             acordo_hj.append(nome)
                             if forms == True:
@@ -338,8 +340,9 @@ def cob_dia(table):
                                         cobrar(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")  
                     elif cobrar_ == 0:
-                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada")
-                                        acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada, OBS: {obs}")
+                                        dicto = {'nome': nome, 'obs': obs}
+                                        acordo_cobdesl.append(dicto)
                                         pass
                 elif pago == 1:
                     pass
@@ -349,8 +352,9 @@ def cob_dia(table):
                     if cobrar_ == 1:
                         numero = comp(nome) 
                         if numero == None:
-                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp")
-                                        acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
+                                        dicto = {'nome': nome, 'obs': obs}
+                                        acordo_cobdesl.append(dicto)
                         else:
                             acordo_hj.append(nome)
                             if forms == True:
@@ -370,21 +374,33 @@ def cob_dia(table):
                                         cob_prazo(nome, dia_atual, numero, navegador)  
                                         print(f"{nome} cobrado(a)")
                     elif cobrar_ == 0:
-                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada")
-                                        acordo_cobdesl.append(nome)
+                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada, OBS: {obs}")
+                                        dicto = {'nome': nome, 'obs': obs}
+                                        acordo_cobdesl.append(dicto)
                                         pass
                 elif pago == 1:
                     pass
-
-        messagebox.showwarning("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados!
-foram cobrados {len(acordo_hj)}
-casos com cobrança automatica desligada:
-{acordo_cobdesl}""")
+        if len(acordo_cobdesl) >= 1:
+            response = messagebox.askyesno("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados!
+    foram cobrados {len(acordo_hj)}, gostaria de tentar cobrar novamente?
+    casos com cobrança automatica desligada:
+    {acordo_cobdesl}""")
+        elif len(acordo_cobdesl) == 0:
+               messagebox.showinfo("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados]
+               foram cobrados{len(acordo_hj)}
+               """) 
+        if response == 1:
+            #create page with list of this cases, and way to select which ones
+            pass
+        if response == 0:
+            pass
 
 def cob_selected(table):
 	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
 caso sim, tenha o celular em mãos""")
 	if response == 1:
+            response = messagebox.askyesno("Escolha tipo de mensagem", "Sim para acordo, não para prazo")
+
             navegador = webdriver.Chrome()
             navegador.get("https://web.whatsapp.com/")
 
@@ -416,17 +432,17 @@ caso sim, tenha o celular em mãos""")
                         if who_acd(obs_dev) == True:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}, porem possui formando")
-                            cobrar_selected(nome_[1], numero, navegador)  
+                            cobrar_selected(nome_[1], numero, navegador, response)  
                             print(f"{nome_[1]} cobrado(a)")  
                         elif who_acd(obs_dev) == False:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o formando: {formando} {numero}")
-                            cobrar_selected(formando, numero, navegador)  
+                            cobrar_selected(formando, numero, navegador, response)  
                             print(f"{nome_[1]} cobrado(a)") 
                     else:
                             print("----------------------------------------------------------------------------------")
                             print(f"Cobrando acordo do {nome_[1]}, acordo sendo com o devedor {numero}")
-                            cobrar_selected(nome_[1], numero, navegador)  
+                            cobrar_selected(nome_[1], numero, navegador, response)  
                             print(f"{nome_[1]} cobrado(a)") 
 
             messagebox.showwarning("Pronto!", f"""Todos os casos selecionadod foram cobrados!
@@ -807,7 +823,7 @@ def get_excel_un(table):
 
     dolf_un = pd.DataFrame(list(zip(nomes_un,data_un,valor_un,obs_un)), columns=columns)
     exit_file = str(directory_un + f"/analise_{table_un}.xlsx")
-    dolf_un.to_excel(exit_file, index=False)
+    dolf_un.to_excel(exit_file, index=False, engine='openpyxl')
     messagebox.showinfo("Salvo!", "Arquivo salvo no local selecionado")
 
 def clear_all_un():
@@ -854,7 +870,6 @@ def add_month(): #this is the page
 
     global tree
     tree = ttk.Treeview(frame)
-
 
     global options_M
     options_M = [
@@ -946,8 +961,7 @@ def adding_month(selection, filename):
                         'obs': _[6]
                         })
                 conn.commit()
-        elif l_len == 6:
-            df['cob']=[1 for i in range(n_rows)]
+        elif l_len == 6 or l_len == 7:
             l = df.values.tolist()
             for _ in l:
                 cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
@@ -989,8 +1003,7 @@ def adding_month(selection, filename):
                         'obs': _[6]
                         })
                     conn.commit()
-            elif l_len == 6:
-                df['cob']=[1 for i in range(n_rows)]
+            elif l_len == 6 or l_len == 7:
                 l = df.values.tolist()
                 for _ in l:
                     cunt.execute(f"INSERT INTO {selection} VALUES (:nome, :data, :prazo, :valor, :cob, :pago, :obs)", 
