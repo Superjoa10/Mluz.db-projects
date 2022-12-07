@@ -286,17 +286,43 @@ def clear_entries():
 
 #FUNCTIONS FOR BUTTONS :
 
+def re_cobrar():
+        dia_atual = datetime.datetime.now().strftime("%d/%m/20%y")
+        x_re = my_treere.selection()
+        response__ = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
+caso sim, tenha o celular em mãos""")
+        if response__ == 1:
+                navegador_re = webdriver.Chrome()
+                navegador_re.get("https://web.whatsapp.com/")
+
+                while len(navegador_re.find_elements(By.ID, 'side')) < 1: 
+                        time.sleep(1)
+                for record_re in x_re:
+                    print("------------------------------")
+                    nome_ = (my_treere.item(record_re, 'values')[1])
+                    obs_ = (my_treere.item(record_re, 'values')[2])
+                    numero = comp(nome_)
+                    if numero == None:
+                        messagebox.showwarning("Sem numero", f"O caso {nome_} esta sem numero de whatsapp, OBS: {obs_}")
+                        pass
+                    else:
+                        cobrar(nome_, dia_atual, numero, navegador_re)
+
+        elif response__ == 0:
+                pass
+
 def clear_all():
    for item in my_tree.get_children():
       my_tree.delete(item)
 
 def cob_dia(table):
         messagebox.showwarning("Checar Whatsapp", "Essa versão da agenda usa o Selenium para mandar mensagem, antes de continuar abra o whatsapp e verifique se não a nenhuma atualização")
-        navegador = webdriver.Chrome()
-        navegador.get("https://web.whatsapp.com/")
+        navegador = 'bruh'
+        #navegador = webdriver.Chrome()
+        #navegador.get("https://web.whatsapp.com/")
 
-        while len(navegador.find_elements(By.ID, 'side')) < 1: 
-            time.sleep(1)
+        #while len(navegador.find_elements(By.ID, 'side')) < 1: 
+        #    time.sleep(1)
 
         acordo_hj = []
         acordo_cobdesl = []
@@ -380,20 +406,59 @@ def cob_dia(table):
                                         pass
                 elif pago == 1:
                     pass
+
         if len(acordo_cobdesl) >= 1:
             response = messagebox.askyesno("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados!
     foram cobrados {len(acordo_hj)}, gostaria de tentar cobrar novamente?
     casos com cobrança automatica desligada:
     {acordo_cobdesl}""")
+            
+            if response == 1:
+                global re_cob
+                re_cob = Toplevel()
+                re_cob.title("Lista recobrados")
+                re_cob.geometry("700x400")
+
+                tree_framere = Frame(re_cob)
+                tree_framere.pack(ipady=180, ipadx=450)
+                tree_framere.configure(bg='#bfbfbf')
+                
+                tree_scrollre = Scrollbar(tree_framere)
+                tree_scrollre.pack(side=RIGHT, fill=Y)
+
+                global my_treere
+                my_treere = ttk.Treeview(tree_framere, selectmode="extended", height=10)
+                my_treere.pack()
+                
+                tree_scrollre.config(command=my_treere.yview)
+                my_treere['columns'] = ("rowid", "nome", "obs")
+
+                # Format columns
+                my_treere.column("#0", width=0, stretch=NO)
+                my_treere.column("rowid", width=0, stretch=NO)
+                my_treere.column("nome", anchor=W, width=325)
+                my_treere.column("obs", anchor=E, width=325)
+
+                # Create Headings
+                my_treere.heading("#0", text="", anchor=W)
+                my_treere.heading("rowid", text="", anchor=W)
+                my_treere.heading("nome", text="nome", anchor=W)
+                my_treere.heading("obs", text="obs", anchor=W)
+
+                for i, res in enumerate(acordo_cobdesl):
+                    my_treere.insert("",'end',iid=res,
+		            values=(i,res["nome"], res["obs"]))
+                
+                cobsel_btnre = Button(tree_framere, text="Cobrar selecionados", command=lambda:re_cobrar(), anchor= CENTER)
+                cobsel_btnre.pack(pady=10)
+                
+            if response == 0:
+                pass
+
         elif len(acordo_cobdesl) == 0:
-               messagebox.showinfo("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados]
-               foram cobrados{len(acordo_hj)}
+               messagebox.showinfo("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados!
+               foram cobrados {len(acordo_hj)}
                """) 
-        if response == 1:
-            #create page with list of this cases, and way to select which ones
-            pass
-        if response == 0:
-            pass
 
 def cob_selected(table):
 	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
@@ -610,7 +675,7 @@ def comp(nome):#queries Mluz db.
                     cobrador = devedor[24]
                     codigo = devedor[25]
                     obs_dev = devedor[29]
-                    if cobrador == "6":
+                    if cobrador == "6" or cobrador == "7":
                         if codigo == "C":
                             if nome_dev == nome:
                                 global formando
