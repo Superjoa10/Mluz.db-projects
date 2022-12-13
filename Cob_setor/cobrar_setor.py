@@ -10,14 +10,13 @@ def query_mluz_csv(cob_selec, codig, line_all):
     line_count = []
     whatsapp_sent = []
     email_sent = []
-    navegador = 'bruh'
-    '''
+    
     navegador = webdriver.Chrome()
     navegador.get("https://web.whatsapp.com/")
 
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    '''
+
     with open("C:/Users/João/Python and Projects/projects/Resume.atempts/agenda_GUI/Devedor.csv", "r", encoding="Latin-1") as file:  
                 csv_reader = csv.reader(file, delimiter=';')  
                 for devedor in csv_reader:

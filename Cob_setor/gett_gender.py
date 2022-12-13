@@ -14,9 +14,6 @@ from email.message import EmailMessage
 
 #Automation functions --------------------------
 def cobrar_dev(nome, numero_, navegador, setor):
-    print('bruh')
-    pass
-    '''
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
@@ -41,12 +38,8 @@ def cobrar_dev(nome, numero_, navegador, setor):
         time.sleep(1)
     navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5)
-    '''
 
 def cobrar_form(nome, dev, numero_, navegador, setor):
-    print('bruh')
-    pass
-    '''
     nime = nome.split(" ")
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
@@ -72,15 +65,11 @@ def cobrar_form(nome, dev, numero_, navegador, setor):
         time.sleep(1)
     navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5)
-    '''
 
 def send_email_dev(nome, setor, email_receiver):
-    print('bruh')
-    pass
-    '''
     Horario = get_time()
-    password = 'Please get password'
-    email_sender = 'contato.mluzassessoria@gmail.com'
+    password = 'YOUR PASSWORD'
+    email_sender = 'YOUR EMAIL'
     subject = 'Debito'
 
     nime = nome.split(" ")
@@ -124,15 +113,11 @@ def send_email_dev(nome, setor, email_receiver):
             smtp.login(email_sender, password)
             smtp.sendmail(email_sender, email_receiver, em.as_string())
             time.sleep(5)
-    '''
 
 def send_email_form(nome, dev, setor, email_receiver):
-    print('bruh')
-    pass
-    '''
     Horario = get_time()
-    password = 'Please get password'
-    email_sender = 'contato.mluzassessoria@gmail.com'
+    password = 'YOUR PASSWORD'
+    email_sender = 'YOUR EMAIL'
     subject = 'Debito'
 
     nime = nome.split(" ")
@@ -177,7 +162,6 @@ def send_email_form(nome, dev, setor, email_receiver):
             smtp.login(email_sender, password)
             smtp.sendmail(email_sender, email_receiver, em.as_string())
             time.sleep(5)
-    '''
     
 def get_contact(obs, forms):
         if forms == True:
@@ -312,7 +296,7 @@ if __name__ == "__main__":
         time.sleep(1)
 
     dia_atual = datetime.datetime.now().strftime("%d/%m/20%y") 
-    teste = ["João", "5511954599589"]
+    teste = ["Your name", "+55 (11) YOUR-NUMBER"]
     pronome = get_gender(teste[0])
     Horario = get_time()
     numero = teste[1]
