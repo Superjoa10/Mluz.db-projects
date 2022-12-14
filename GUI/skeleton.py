@@ -1268,13 +1268,32 @@ def query_database(table):
                 current_data = datetime.datetime.strptime(record[2], "%d/%m/%Y")
                 weekcheck = datetime.datetime.strptime(record[2], "%d/%m/%Y").strftime("%A")
                 if weekcheck == "Saturday":
-                      tree_data_ = current_data + datetime.timedelta(days=2)
-                      tree_data = tree_data_.strftime("%d/%m/%Y")
+                    tree_data_ = current_data + datetime.timedelta(days=2)
+                    tree_data = tree_data_.strftime("%d/%m/%Y")
+                    c.execute(f"""UPDATE {table} SET
+                            data = :data
+                            WHERE oid = :oid""",
+                            {
+                                'data': tree_data_,
+                                'oid': record[0]})
+
                 elif weekcheck == "Sunday":
-                      tree_data_ = current_data + datetime.timedelta(days=1)
-                      tree_data = tree_data_.strftime("%d/%m/%Y")
+                    tree_data_ = current_data + datetime.timedelta(days=1)
+                    tree_data = tree_data_.strftime("%d/%m/%Y")
+                    c.execute(f"""UPDATE {table} SET
+                            data = :data
+                            WHERE oid = :oid""",
+                            {
+                                'data': tree_data_,
+                                'oid': record[0]})
+
                 else:
                     tree_data = record[2]
+                print('----------------------')
+                print(record[2])
+                print(current_data)
+                print(tree_data)
+
                 my_tog='puss' if record[6] == 2 else 'fail'
                 my_tag='pass' if record[6] == 1 else 'fail' 
                 looo = record[4]
