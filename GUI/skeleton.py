@@ -398,22 +398,45 @@ def cob_dia(table):
                                         dicto = {'nome': nome, 'obs': obs}
                                         acordo_cobdesl.append(dicto)
                         else:
-                            acordo_hj.append(nome)
                             if forms == True:
                                 if who_acd(obs_dev) == True:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}, porem possui formando")
-                                        cobrar(nome, dia_atual, numero, navegador)  
+                                        Bo = cobrar(nome, dia_atual, numero, navegador)
+                                        if Bo  == False:
+                                            obs_ = str(obs + "#NO SUCH ELEMENT ERROR#")
+                                            messagebox.showwarning("Sem numero", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                            dicto = {'nome': nome, 'obs': obs_}
+                                            acordo_cobdesl.append(dicto)
+                                            pass
+                                        else:
+                                            acordo_hj.append(nome)
                                         print(f"{nome} cobrado(a)")  
                                 elif who_acd(obs_dev) == False:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o formando: {formando} {numero}")
-                                        cobrar(formando, dia_atual, numero, navegador)  
+                                        Bo = cobrar(formando, dia_atual, numero, navegador)  
+                                        if Bo == False:
+                                            obs_ = str(obs + "#NO SUCH ELEMENT ERROR#")
+                                            messagebox.showwarning("Sem numero", f"O caso {nome} com formando {formando} não connseguiu enviar mensage;, OBS: {obs_}")
+                                            dicto = {'nome': nome, 'obs': obs_}
+                                            acordo_cobdesl.append(dicto)
+                                            pass
+                                        else:
+                                            acordo_hj.append(nome)
                                         print(f"{nome} cobrado(a)") 
                             else:
                                         print("----------------------------------------------------------------------------------")
                                         print(f"Cobrando acordo do {nome}, acordo sendo com o devedor {numero}")
-                                        cobrar(nome, dia_atual, numero, navegador)  
+                                        Bo = cobrar(nome, dia_atual, numero, navegador)
+                                        if Bo  == False:
+                                            obs_ = str(obs + "#NO SUCH ELEMENT ERROR#")
+                                            messagebox.showwarning("Sem numero", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                            dicto = {'nome': nome, 'obs': obs_}
+                                            acordo_cobdesl.append(dicto)
+                                            pass
+                                        else:
+                                            acordo_hj.append(nome)  
                                         print(f"{nome} cobrado(a)")  
                     elif cobrar_ == 0:
                                         messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada, OBS: {obs}")
@@ -512,7 +535,7 @@ def cob_dia(table):
                messagebox.showinfo("Pronto!", f"""Todos os casos para o dia {dia_atual} foram cobrados!
                foram cobrados {len(acordo_hj)}
                """) 
-
+               
 def cob_selected(table):
 	response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
 caso sim, tenha o celular em mãos""")

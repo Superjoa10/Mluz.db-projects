@@ -5,6 +5,7 @@ import gender_guesser.detector as gender
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 import time
 import urllib
 import datetime
@@ -25,8 +26,12 @@ def cobrar(nome, dia_atual, numero_, navegador):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
-    time.sleep(5) 
+    try:
+        send = navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]')
+    except NoSuchElementException:
+        return False
+    send.click()
+    time.sleep(5)
 
 def cob_prazo(nome, dia_atual, numero_, navegador):
     nom = nome.split(" ")
@@ -75,7 +80,7 @@ def cobrar_posiçao(nome, numero_, navegador):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    #navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
     time.sleep(5) 
 
 #Basic info funcions -----
