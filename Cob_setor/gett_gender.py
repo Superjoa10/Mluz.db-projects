@@ -5,6 +5,7 @@ import gender_guesser.detector as gender
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 import time
 import urllib
 import datetime
@@ -36,7 +37,10 @@ def cobrar_dev(nome, numero_, navegador, setor):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    try:
+        navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]').click
+    except NoSuchElementException:
+        pass
     time.sleep(5)
 
 def cobrar_form(nome, dev, numero_, navegador, setor):
@@ -63,13 +67,16 @@ def cobrar_form(nome, dev, numero_, navegador, setor):
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    try:
+        navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]').click
+    except NoSuchElementException:
+        pass
     time.sleep(5)
 
 def send_email_dev(nome, setor, email_receiver):
     Horario = get_time()
-    password = 'YOUR PASSWORD'
-    email_sender = 'YOUR EMAIL'
+    password = 'saajuaejqxvusgiy'
+    email_sender = 'contato.mluzassessoria@gmail.com'
     subject = 'Debito'
 
     nime = nome.split(" ")
@@ -116,8 +123,8 @@ def send_email_dev(nome, setor, email_receiver):
 
 def send_email_form(nome, dev, setor, email_receiver):
     Horario = get_time()
-    password = 'YOUR PASSWORD'
-    email_sender = 'YOUR EMAIL'
+    password = 'saajuaejqxvusgiy'
+    email_sender = 'contato.mluzassessoria@gmail.com'
     subject = 'Debito'
 
     nime = nome.split(" ")
@@ -296,7 +303,7 @@ if __name__ == "__main__":
         time.sleep(1)
 
     dia_atual = datetime.datetime.now().strftime("%d/%m/20%y") 
-    teste = ["Your name", "+55 (11) YOUR-NUMBER"]
+    teste = ["João", "954599589"]
     pronome = get_gender(teste[0])
     Horario = get_time()
     numero = teste[1]
@@ -306,5 +313,8 @@ if __name__ == "__main__":
     navegador.get(link)
     while len(navegador.find_elements(By.ID, 'side')) < 1: 
         time.sleep(1)
-    navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]/button/span').click()
+    try:
+        navegador.find_element(By.XPATH, '//*[@id="main"]/footer/div[1]/div/span[2]/div/div[2]/div[2]').click
+    except NoSuchElementException:
+        pass
     time.sleep(5)    
