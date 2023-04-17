@@ -23,6 +23,6 @@ the devedores.csv would contain part of the my works database.
 #Warning:
 Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, Selenium in the main branch being better for this, but PYAUTOGUI being great in many instances, Selenium is just better for Web automations. The infomation about where to click may be out of sync, becouse the informations is from a very old computer (Windows 7).
 
-get_gender.py:
+get_genderr.py:
 
 Is a group of complementory functions that i've created to avoid making the same functions everytime i detect a gender for exemple, or using regex to extract numbers from the DB.
