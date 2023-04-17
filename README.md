@@ -13,10 +13,15 @@ It takes the name from the debtor, and uses it to query the number from a csv th
 How to test it:
 the agenda.csv file has a few exemples of how the deals would look like. 
 the devedores.csv would contain part of the my works database.
-To test this python script, all you have to do is to open the devedores.csv and input a valid number in the DevOBS column for each line.
-Than run the python script given the files are referenced correctly in the referecend lines.
+
+1. First you have to open the devedores.csv and input a valid number in the DevOBS column for each line ( will have **PLACE NUM HERE** in the line ).
+
+2. Open Whatsapp on your browser, when running the script you'll have a few seconds to open the browser. *You may not move the mouse or any keys while the scrit is running to avoid any errors.
+
+3. Run the python script given the files are referenced correctly in the referecend lines, and the makro has the right information of where to click based on the display used.
+
 #Warning:
-Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, selenium in the main branch being better for this, but PYAUTOGUI being great, this ones being used in an old computer, the infomation about where to click may be out of sync.
+Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, Selenium in the main branch being better for this, but PYAUTOGUI being great in many instances, Selenium is just better for Web automations. The infomation about where to click may be out of sync, becouse the informations is from a very old computer (Windows 7).
 
 get_genderr.py:
 
