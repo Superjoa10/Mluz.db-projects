@@ -1,4 +1,4 @@
-# *Mluz.db-projects is a combination of my projects that uses my works Database(debt colletion db)for automations and data science *
+# *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
 This Branch is old, only being kept to demonstrait my abilities with PYAUTOGUI.
 
 # Python files:
@@ -18,11 +18,11 @@ the devedores.csv would contain part of the my works database.
 
 2. Open Whatsapp on your browser, when running the script you'll have a few seconds to open the browser. *You may not move the mouse or any keys while the scrit is running to avoid any errors.
 
-3. Run the python script given the files are referenced correctly in the referecend lines, and the makro has the right information of where to click based on the display used.
+3. Run the python script given that the files are referenced correctly in the lines above for acordos.csv and devedor.csv, and the makro has the right information of where to click based on the display used.
 
 #Warning:
 Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, Selenium in the main branch being better for this, but PYAUTOGUI being great in many instances, Selenium is just better for Web automations. The infomation about where to click may be out of sync, becouse the informations is from a very old computer (Windows 7).
 
-get_genderr.py:
+get_gender.py:
 
 Is a group of complementory functions that i've created to avoid making the same functions everytime i detect a gender for exemple, or using regex to extract numbers from the DB.
