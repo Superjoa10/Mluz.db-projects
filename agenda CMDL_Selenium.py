@@ -1,6 +1,6 @@
 import pyautogui as gui, datetime, time, csv
 import re
-from command_line_scripts.gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
+from gett_gender import get_gender, num_acd, form, a_form, get_time, who_acd
 import urllib
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
