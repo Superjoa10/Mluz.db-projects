@@ -25,7 +25,13 @@ the devedores.csv would contain part of the my works database.
 
 1. First you have to open the devedores.csv and input a valid number in the DevOBS column for each line ( will have **PLACE NUM HERE** in the line ).
 
-2. Open Whatsapp on your browser, when running the script you'll have a few seconds to open the browser. *You may not move the mouse or any keys while the scrit is running to avoid any errors.
+2. Check the acordo file, it must be referenced corretly, to test put the date 'data' as the current date, or thre prazo to test in case of the debtor asking a later date
+
+2. 
+FOR PYAUTOGUI: Open Whatsapp on your browser, when running the script you'll have a few seconds to open the browser. *You may not move the mouse or any keys while the scrit is running to avoid any errors;
+
+FOR SELENIUM: Have your cellphone at the ready to scan the QRcode.
+.
 
 3. Run the python script given that the files are referenced correctly in the lines above for acordos.csv and devedor.csv, and the makro has the right information of where to click based on the display used.
 
