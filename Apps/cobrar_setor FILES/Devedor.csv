@@ -1,0 +1,91 @@
+DevCod;DevRazao Social;DevEndereco;DevCidade;DevEstado;DevCEP;DevTelefone;DevFax;DevEmail;DevEndereço Residencial;DevCidade Residencial;DevEstado Residencial;DevCEP Residencial;DevTelefoneResidencial;DevCelular;DevTelefoneAlternativo;DevData de Entrada;DevData de Saida;DevObservações;DevCNPJ;DevIE;DevCPF;DevRG;DevCódigoDoCliente;DevCodigoDoFuncionário;DevSetor;DevCódigoDoPagamento;DevCódigoDoDocumento;DevPesquisa;DevOBS;DevProtestoCliente;DevProtestoMluz;DevRamal;DevRamal Residencia;CLIESC;DEVA;DevTelcom2;DevTelcom2ram;DevTelcom3;DevTelcom3ram;DevTelefoneResidencial2;DevCelular2
+1;Patrick McReary;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;SP;;;;;02/02/2023;;;;;555.555.555-55;;846;6;C;0;0;;"Aluno: 330380
+Receita: 40%
+Formando: Kate McReary
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_dev: ***INSERT NUM HERE***
+------------------------------------------------------
+acd_dev";FALSO;FALSO;;;;;;;;;;
+2;Derrick McReary;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;845;6;C;0;0;;"Aluno: 330381
+Receita: 40%
+Formando: Kate McReary
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_form: ***INSERT NUM HERE***
+------------------------------------------------------
+acd_form";FALSO;FALSO;;;;;;;;;;
+3;Francis McReary;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;844;6;C;0;0;;"Aluno: 330382
+Receita: 40%
+Formando: O mesmo
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N: ***INSERT NUM HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+4;Gerald McReary;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;843;6;D;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: O mesmo
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N: ***INSERT NUM HERE***                                                   Email: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+5;Niko Bellic;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;842;6;D;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: Kate McReary
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_DEV: ***INSERT NUM HERE***                                                   N_FORM: ***INSERT NUM HERE***                            EMAIL_DEV: ***INSERT E-MAIL HERE***                                                   EMAIL_FORM: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+6;Roman Bellic;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;726;6;B;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: Niko Bellic
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_DEV: ***INSERT NUM HERE***                                                   N_FORM: ***INSERT NUM HERE***                            EMAIL_DEV: ***INSERT E-MAIL HERE***                                                   EMAIL_FORM: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+7;Dimitri Rascalov;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;726;6;B;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: O mesmo
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N: ***INSERT NUM HERE***                                                   Email: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+8;Gerald McReary;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;843;7;D;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: O mesmo
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N: ***INSERT NUM HERE***                                                   Email: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+9;Niko Bellic;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;842;7;D;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: Kate McReary
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_DEV: ***INSERT NUM HERE***                                                   N_FORM: ***INSERT NUM HERE***                            EMAIL_DEV: ***INSERT E-MAIL HERE***                                                   EMAIL_FORM: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+10;Roman Bellic;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;726;7;B;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: Niko Bellic
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N_DEV: ***INSERT NUM HERE***                                                   N_FORM: ***INSERT NUM HERE***                            EMAIL_DEV: ***INSERT E-MAIL HERE***                                                   EMAIL_FORM: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;
+11;Dimitri Rascalov;;;;;;;;Rua exemplo n∫55 Parque exemplar;S„o Paulo;;;;;;02/02/2023;;;;;555.555.555-55;;726;7;B;0;0;;"Aluno: 330383
+Receita: 40%
+Formando: O mesmo
+Curso: Ciencias da computaÁ„o
+------------------------------------------------------
+Contatos
+N: ***INSERT NUM HERE***                                                   Email: ***INSERT E-MAIL HERE***
+------------------------------------------------------";FALSO;FALSO;;;;;;;;;;

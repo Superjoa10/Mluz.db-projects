@@ -22,7 +22,7 @@ def cobrar(nome, dia_atual, numero_, navegador):
     primeiro_nome = nime[0].capitalize()
     pronome = get_gender(primeiro_nome)
     Horario = get_time()
-    numero = "55" + numero_
+    numero = numero_
     mensagem = (f"{Horario} {pronome[0]}, conforme acordo nesse dia {dia_atual}, aguardo pagamento")  
 
     texto = urllib.parse.quote(mensagem)
@@ -45,7 +45,7 @@ def cob_prazo(nome, dia_atual, numero_, navegador):
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
-    numero = "55" + numero_
+    numero = numero_
     mensage = (f"{Horari} {pronom[0]}, conforme prazo nesse dia {dia_atual}, aguardo pagamento")   
  
     text = urllib.parse.quote(mensage)
@@ -69,7 +69,7 @@ def cobrar_selected(nome, numero_, navegador, response):
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
-    numero = "55" + numero_
+    numero = numero_
     if response == 1:
         mensage = (f"{Horari} {pronom[0]}, conforme acordo, aguardo pagamento")
     elif response == 2:
@@ -94,7 +94,7 @@ def cobrar_posiçao(nome, numero_, navegador):
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
-    numero = "55" + numero_
+    numero = numero_
     mensage = (f"{Horari} {pronom[0]}, alguma posição?")   
  
     text = urllib.parse.quote(mensage)
@@ -117,7 +117,7 @@ def cobrar_lem(nome, data_acd, numero_, navegador):
     primeir_nome = nom[0].capitalize()
     pronom = get_gender(primeir_nome)
     Horari = get_time()
-    numero = "55" + numero_
+    numero = numero_
     mensage = (f"{Horari} {pronom[0]}, essa mensagem é automatica e serve como lembrete do seu acordo com vencimento para o dia {data_acd}.")   
  
     text = urllib.parse.quote(mensage)
@@ -284,10 +284,10 @@ if __name__ == "__main__":
         time.sleep(1)
 
     dia_atual = datetime.datetime.now().strftime("%d/%m/20%y") 
-    teste = ["João", "5511954599589"]
-    pronome = get_gender(teste[0])
+    nome = input('Enter valid name; suggestion: John')
+    numero = input('Enter valid phone number with contry code')
+    pronome = get_gender(nome)
     Horario = get_time()
-    numero = teste[1]
     mensagem = (f"{Horario} {pronome[0]}, nesse dia {dia_atual}, {pronome[2]} {pronome[0]} esta testando as funções de mensagem automatica seu otario")  
     texto = urllib.parse.quote(mensagem)
     link = f"https://web.whatsapp.com/send?phone={numero}&text={texto}"
