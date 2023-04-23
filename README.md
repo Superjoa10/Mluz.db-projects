@@ -1,16 +1,25 @@
 # *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
 This Branch is old, only being kept to demonstrait my abilities with PYAUTOGUI.
 
-# Python files:
+# *Python files*:
 
-Agenda.py:
+# Agenda CMDL PYAUTOGUI.py:
 
-(requires list of deals, and database that contains the contact information, the ones in this repository being only exemples)
-is a python script that uses my old list of deals in excel(not here for privacy reasons), that i've turned into a CSV (acordos.csv, line 73) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal.
 
-It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, not here for privacy reasons, refereced in line 54)
+is a python script that uses my old list of deals in excel(not here for privacy reasons), that i've turned into a CSV (acordos.csv, lesser version for securety reasins, line 73) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal.
 
-How to test it:
+It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, lesser version privacy reasons, refereced in line 54)
+
+*Warning:
+Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, Selenium in the main branch being better for this, but PYAUTOGUI being great in many instances, Selenium is just better for Web automations. The infomation about where to click may be out of sync, becouse the informations is from a very old computer (Windows 7).
+
+
+# Agenda CMDL SELENIUM.py:
+is a python script that uses my old list of deals in excel(lesser version privacy reasons), that i've turned into a CSV (acordos.csv, line 67) to send automatic messages taking in considereation time of day, gender, and more particularities of the deal. Where one of my first tests using selenium and worked ok for the most part, way faster than PYAUTOGUI for the task.
+
+It takes the name from the debtor, and uses it to query the number from a csv that was, itself converted from my access work database(Access 2010 runtime, lesser version privacy reasons, refereced in line 44)
+
+# How to test it:
 the agenda.csv file has a few exemples of how the deals would look like. 
 the devedores.csv would contain part of the my works database.
 
@@ -20,8 +29,6 @@ the devedores.csv would contain part of the my works database.
 
 3. Run the python script given that the files are referenced correctly in the lines above for acordos.csv and devedor.csv, and the makro has the right information of where to click based on the display used.
 
-#Warning:
-Take in to concideration that this script was one of my firsts in automations, and PYAUTOGUI is not very good at Whatsapp messege automations, Selenium in the main branch being better for this, but PYAUTOGUI being great in many instances, Selenium is just better for Web automations. The infomation about where to click may be out of sync, becouse the informations is from a very old computer (Windows 7).
 
 get_genderr.py:
 
