@@ -1,0 +1,101 @@
+{
+ "version": "auto-py-to-exe-configuration_v1",
+ "pyinstallerOptions": [
+  {
+   "optionDest": "noconfirm",
+   "value": true
+  },
+  {
+   "optionDest": "filenames",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/body.py"
+  },
+  {
+   "optionDest": "onefile",
+   "value": false
+  },
+  {
+   "optionDest": "console",
+   "value": false
+  },
+  {
+   "optionDest": "icon_file",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/icons/Home_page.ico"
+  },
+  {
+   "optionDest": "name",
+   "value": "Agenda 2023 - 1.4 SOURCE CODE"
+  },
+  {
+   "optionDest": "ascii",
+   "value": false
+  },
+  {
+   "optionDest": "clean_build",
+   "value": false
+  },
+  {
+   "optionDest": "strip",
+   "value": false
+  },
+  {
+   "optionDest": "noupx",
+   "value": false
+  },
+  {
+   "optionDest": "disable_windowed_traceback",
+   "value": false
+  },
+  {
+   "optionDest": "embed_manifest",
+   "value": true
+  },
+  {
+   "optionDest": "uac_admin",
+   "value": false
+  },
+  {
+   "optionDest": "uac_uiaccess",
+   "value": false
+  },
+  {
+   "optionDest": "win_private_assemblies",
+   "value": false
+  },
+  {
+   "optionDest": "win_no_prefer_redirects",
+   "value": false
+  },
+  {
+   "optionDest": "bootloader_ignore_signals",
+   "value": false
+  },
+  {
+   "optionDest": "argv_emulation",
+   "value": false
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/icons;icons/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/config_files;config_files/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/soul.py;."
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/Jo\u00e3o/AppData/Local/Programs/Python/Python310/Lib/site-packages/customtkinter;customtkinter/"
+  },
+  {
+   "optionDest": "datas",
+   "value": "C:/Users/Jo\u00e3o/Projects/Resume.atempts/Auto_py_to_exe transfer/agenda_gui/agenda_transfer/Lib/site-packages/gender_guesser;gender_guesser/"
+  }
+ ],
+ "nonPyinstallerOptions": {
+  "increaseRecursionLimit": true,
+  "manualArguments": ""
+ }
+}
