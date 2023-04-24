@@ -18,14 +18,14 @@ from logging import PlaceHolder
 from tkinter import *
 from tkinter import filedialog, messagebox, ttk
 
-from soul import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected, cobrar_posiçao, money_logic, itemgetter, callback
+from soul import form, a_form, num_acd, who_acd, cobrar, cob_prazo, cobrar_selected, cobrar_posiçao, cobrar_lem, money_logic, itemgetter, callback
 
 import pandas as pd
 
 #Database location
 _Db_ = 'config_files/Agenda_2023.db'
 
-#read config file, defines theme, and other details
+#Read config file, defines theme, and other details
 parser = ConfigParser()
 parser.read("config_files/agenda_ops.ini")
 saved_color = parser.get('colors', 'color')
@@ -66,21 +66,74 @@ def year_agenda():#PAGE
     open_month = custk.CTkButton(year, text="Abrir", command=lambda:open_selected(selec))
     open_month.grid(column = 0, row = 2, pady=10)
 
-    del_month = custk.CTkButton(year, text="Deletar", command=lambda:drop_table(selec))
+    del_month = custk.CTkButton(year, text="Deletar", command=lambda:drop_table(selec), fg_color='darkred')
     del_month.grid(column = 0, row = 3)
 
 
-def tests_page():#PAGE
+def option_page():#PAGE
     """ Opens test page that gives option to test varios functions like Whatsapp or email automation *WORK IN PROGRESS* """
+    list_color = 'system', 'light', 'dark'
+    list_show = 'Y', 'N'
+
     global tets
     tets = custk.CTkToplevel()
-    main_title = custk.CTkLabel(root, text="Work in progress", anchor=CENTER, padx=3, pady=2)
+    tets.title("Options menu")
+    tets.geometry("190x180")
+    tets.wm_iconbitmap("icons/cogflat_106041.ico")
+    tets.minsize(170, 120)
+    tets.maxsize(190, 180)
+
+    main_title = custk.CTkLabel(tets, text="Menu de Opções", anchor=CENTER, padx=3, pady=2, font=("Times New Roman", 25))
+    main_title.grid(column=0, row=0, padx=10, pady=5)
+
+    color_label = custk.CTkLabel(tets, text="Tema", anchor=CENTER, padx=3, pady=2,  font=("Times New Roman",21))
+    color_label.grid(column=0, row=1, padx=10)  
+
+    var_col = custk.StringVar(value=f'{saved_color}', name='var_col')
+    color_menu = custk.CTkOptionMenu(tets, values = list_color, variable= var_col, command=color_opt)    
+    color_menu.grid(column=0, row=2, padx=10, pady=5)
+
+    show_label = custk.CTkLabel(tets, text="Mostrar pagos", anchor=CENTER, padx=3, pady=2,  font=("Times New Roman",21))
+    show_label.grid(column=0, row=3, padx=10)  
+
+    parser = ConfigParser()
+    parser.read("config_files/agenda_ops.ini")
+    saved_show = parser.get('colors', 'cleb')
+
+    var_show = custk.StringVar(value=f'{saved_show}', name='var_show')
+    show_menu = custk.CTkOptionMenu(tets, values = list_show, variable= var_show, command=show_opt)    
+    show_menu.grid(column=0, row=4, padx=10, pady=5)    
 
 
-#Sub levels of Year Agenda page
+#Helper functions for options
+
+def color_opt(selection):
+    selection_color = selection
+    custk.set_appearance_mode(selection_color)
+
+    parser = ConfigParser()
+    parser.read('config_files/agenda_ops.ini')
+    parser.set('colors', 'color', selection)
+    with open('config_files/agenda_ops.ini', 'w') as configfile:
+        parser.write(configfile)
+
+def show_opt(selection):
+    shown_selec = selection
+    parser = ConfigParser()
+    parser.read('config_files/agenda_ops.ini')
+    if shown_selec == 'Y':
+        parser.set('colors', 'cleb', 'Y')
+        with open('config_files/agenda_ops.ini', 'w') as configfile:
+            parser.write(configfile)
+    if shown_selec == 'N':
+        parser.set('colors', 'cleb', 'N')
+        with open('config_files/agenda_ops.ini', 'w') as configfile:
+            parser.write(configfile)
+    
+
+#MAIN PAGE - Sub levels of Year Agenda page
 
 def open_selected(mes):#PAGE
-    lembrete(mes)
     try:
         global main, me
         me = mes
@@ -131,12 +184,6 @@ def open_selected(mes):#PAGE
  
         tree_scroll = custk.CTkScrollbar(tree_frame)
         tree_scroll.pack(side=RIGHT, fill=Y)
-
-        #Style for treeview
-        style = ttk.Style()
-        style.theme_use("classic")
-        style.configure('Treeview', background='silver', foreground='black', fieldbackground='silver')
-        style.map('Treeview', background=[('selected', '#009EFF')])
 
         #treeview creation and appending Scrollbar
         my_tree = ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended", height=40)
@@ -242,7 +289,7 @@ def open_selected(mes):#PAGE
         acd_list_btn = custk.CTkButton(data_frame, text="Lista acd. desfeitos", command=lambda:open_list(mes),anchor= CENTER, width=100)
         acd_list_btn.grid(row=1, column=16, pady=5)
 
-        
+        lembrete(mes)
         my_tree.bind("<ButtonRelease-1>", select_record)
 
     except sqlite3.Error as er:
@@ -252,14 +299,51 @@ def open_selected(mes):#PAGE
         messagebox.showerror("Table not diffined", "A agenda desse mes não foi definida, caso queira a defina adicionando um mes na pagina anterior")
 
 
-def lembrete(mes):#PAGE  !!! TODO
-    """*WORK IN PROGRESS* Takes all deals that are 2 to 5 days ahead, and returns a list of them, thats used to send a reminder to about the upcoming date for the deal"""
-    dia_hj = datetime.datetime.now().strftime("%d/%m/%y")
-    global lembr
+def lembrete(mes):#PAGE
+    """Takes all deals that are 3 to 5 days ahead, and returns a list of them, thats used to send a reminder to the person about the upcoming date for the deal"""
+    
+    dia_hj = datetime.datetime.now().strftime("%d/%m/%Y")
+    N_cases = list()
+
+    global lembr, tree_lem
     lembr = custk.CTkToplevel()
     lembr.title(f"Lembretes do dia {dia_hj} ")
-    lembr.minsize(430, 350)
-    lembr.maxsize(430, 350)
+    lembr.minsize(700, 250)
+    lembr.maxsize(700, 250)
+
+    tree_scroll = custk.CTkScrollbar(lembr)
+    tree_scroll.pack(side=RIGHT, fill=Y)
+
+    style = ttk.Style()
+    style.theme_use("classic")
+    style.configure('Treeview', background='silver', foreground='black', fieldbackground='silver')
+    style.map('Treeview', background=[('selected', '#009EFF')])
+
+    tree_lem = ttk.Treeview(lembr, yscrollcommand=tree_scroll.set, selectmode="extended", height=10) #25
+    tree_lem.pack()
+    tree_scroll.configure(command=tree_lem.yview)
+
+    # Define columns
+    tree_lem['columns'] = ("rowid", "nome", "data", "prazo", "obs")
+
+    # Format columns
+    tree_lem.column("#0", width=0, stretch=NO)
+    tree_lem.column("rowid", width=0, stretch=NO)
+    tree_lem.column("nome", anchor=W, width=300)
+    tree_lem.column("data", anchor=W, width=90)
+    tree_lem.column("prazo", anchor=CENTER, width=45)
+    tree_lem.column("obs", anchor=E, width=400)
+
+    # Create Headings
+    tree_lem.heading("#0", text="", anchor=W)
+    tree_lem.heading("rowid", text="", anchor=W)
+    tree_lem.heading("nome", text="Nome", anchor=W)
+    tree_lem.heading("data", text="Data", anchor=W)
+    tree_lem.heading("prazo", text="Prazo", anchor=CENTER)
+    tree_lem.heading("obs", text="OBS", anchor=W)
+
+    lem_button = custk.CTkButton(lembr, text="Cobrar selecionados", command=lambda:cob_lembrete())
+    lem_button.pack(pady=10)
 
     conn = sqlite3.connect(_Db_)
     c = conn.cursor()
@@ -267,83 +351,62 @@ def lembrete(mes):#PAGE  !!! TODO
     records = c.fetchall()
     for record in records:
         if record[4] != 1:
-            #make simple func. for all this
             acd_lem = datetime.datetime.strptime(record[2], "%d/%m/%Y") - datetime.timedelta(days=3)
             weekcheck = acd_lem.strftime("%A")
-            try:
-                lembr_lem = datetime.datetime.strptime(record[3], "%d/%m/%Y") - datetime.timedelta(days=3)
-                weekcheck_lembr = lembr_lem.strftime("%A")
-            except ValueError:
-                  pass
 
-            #check weekend for both data and prazo
+            #check weekend
             if weekcheck == "Saturday":
                 tree_data_ = acd_lem - datetime.timedelta(days=1)
-                tree_data = tree_data_.strftime("%d/%m/%Y")
+                tree_data = tree_data_.strftime("%d/%m/20%y")
             elif weekcheck == "Sunday":
                 tree_data_ = acd_lem - datetime.timedelta(days=2)
-                tree_data = tree_data_.strftime("%d/%m/%Y")
+                tree_data = tree_data_.strftime("%d/%m/20%y")
             else:
-                tree_data = acd_lem
+                tree_data = acd_lem.strftime("%d/%m/20%y")
 
-            try:
-                if weekcheck_lembr == "Saturday":
-                    tree_data__ = lembr_lem - datetime.timedelta(days=1)
-                    tree_data_lembr = tree_data__.strftime("%d/%m/%Y")
-                elif weekcheck_lembr == "Sunday":
-                    tree_data__ = lembr_lem - datetime.timedelta(days=2)
-                    tree_data_lembr = tree_data__.strftime("%d/%m/%Y")
-                else:
-                    tree_data_lembr = lembr_lem
-            except UnboundLocalError:
-                pass
 
             if dia_hj == tree_data:
                 include_lem = True
-            try:
-                if dia_hj == tree_data_lembr:  
-                    include_lem = True
-            except UnboundLocalError:
-                include_lem = False
-                break
+                N_cases.append(record[1])
             else: 
                 include_lem = False
 
-        tree_scroll = custk.CTkScrollbar(lembr)
-        tree_scroll.pack(side=RIGHT, fill=Y)
-
-        style = ttk.Style()
-        style.theme_use("classic")
-        style.configure('Treeview', background='silver', foreground='black', fieldbackground='silver')
-        style.map('Treeview', background=[('selected', '#009EFF')])
-
-        tree_lem = ttk.Treeview(lembr, yscrollcommand=tree_scroll.set, selectmode="extended", height=40) #25
-        tree_lem.pack()
-        tree_scroll.configure(command=tree_lem.yview)
-
-        # Define columns
-        tree_lem['columns'] = ("rowid", "nome", "data", "prazo", "obs")
-
-        # Format columns
-        tree_lem.column("#0", width=0, stretch=NO)
-        tree_lem.column("rowid", width=0, stretch=NO)
-        tree_lem.column("nome", anchor=W, width=400)
-        tree_lem.column("data", anchor=W, width=85)
-        tree_lem.column("prazo", anchor=CENTER, width=85)
-        tree_lem.column("obs", anchor=E, width=1000)
-
-        # Create Headings
-        tree_lem.heading("#0", text="", anchor=W)
-        tree_lem.heading("rowid", text="", anchor=W)
-        tree_lem.heading("nome", text="Nome", anchor=W)
-        tree_lem.heading("data", text="Data", anchor=W)
-        tree_lem.heading("prazo", text="Prazo", anchor=CENTER)
-        tree_lem.heading("obs", text="OBS", anchor=W)
-
         if include_lem == True:
-            my_tree.insert(parent='', index='end', text='', values=(record[0], record[1], record[2], record[3],  record[6]))
-        else: 
-            pass
+            tree_lem.insert("", 'end', values=(record[0], record[1], record[2], record[3],  record[6]))
+
+    if len(N_cases) < 1:
+        lembr.destroy()
+
+
+#Helper function for button in 'lembrete' page 
+
+def cob_lembrete():
+        """Takes selected options on the Treeview present in the 'lembrete' page, and organizes it to send to the 'cobrar_lem' function, sending a reminder message to the given cases"""
+        x_lem = tree_lem.selection()
+
+        response__ = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
+caso sim, tenha o celular em mãos""")
+        if response__ == 1:
+                navegador_lem = 'bruh'
+                '''
+                navegador_lem = webdriver.Chrome()
+                navegador_lem.get("https://web.whatsapp.com/")
+                while len(navegador_lem.find_elements(By.ID, 'side')) < 1: 
+                        time.sleep(1)
+                '''
+                for record_re in x_lem:
+                    nome_ = (tree_lem.item(record_re, 'values')[1])
+                    data_acd = (tree_lem.item(record_re, 'values')[2])
+                    obs_ = (tree_lem.item(record_re, 'values')[3])
+                    numero = comp(nome_)
+                    if numero == None:
+                        messagebox.showwarning("Sem numero", f"O caso {nome_} esta sem numero de whatsapp, OBS: {obs_}")
+                        pass
+                    else:
+                        cobrar_lem(nome_, data_acd, numero, navegador_lem)
+
+        elif response__ == 0:
+                pass
 
 
 #Functions for page style, and parsing to config. file
@@ -388,6 +451,7 @@ def color_theme(col):
     parser.set('colors', 'color', col)
     with open('config_files/agenda_ops.ini', 'w') as configfile:
         parser.write(configfile)
+
 
 #Helper Functions
 
@@ -626,7 +690,7 @@ def get_excel(table):
     pass
 
 
-#Dropdown menu for 'Acordos', referenced in 'acordo_callback' function
+#Dropdown menu options for 'Acordos', referenced in 'acordo_callback' function
 
 def add_acordo(table):
         """Adds new deal, 'acordo' to the current Table."""
@@ -704,7 +768,7 @@ def del_no_sort(table):
             pass
 
 
-#Dropdown  menu for 'Cobrar', referenced in 'cobrar_callback' function
+#Dropdown menu options for 'Cobrar', referenced in 'cobrar_callback' function
 
 def cob_dia(table):
         """Deals with all the mind of getting all the deals for the day, plus the ones that asked for more time 'prazo'.
@@ -718,19 +782,23 @@ def cob_dia(table):
         8. After all is done, gives the option wether you'd like to get a list of the cases that where unsuccesfull. Given you'd like, it opens a secondery page with a threeview and a option to retry the selected ones (Only gives the option if there where any unsuccesfull ones) """
         response_dia = messagebox.askyesno("Cobrar dia", """Voce tem certeza que gostaria de cobrar os casos do dia?""")
         if response_dia == 1:
+            navegador = 'bruh'
+            '''
             navegador = webdriver.Chrome()
             navegador.get("https://web.whatsapp.com/")
 
             while len(navegador.find_elements(By.ID, 'side')) < 1: 
                 time.sleep(1)
+            '''
 
-            acordo_hj = []
-            acordo_cobdesl = []
+            acordo_hj = list()
+            acordo_cobdesl = list()
+            
             global dia_atual
             dia_atual = datetime.datetime.now().strftime("%d/%m/20%y")
             conn = sqlite3.connect(_Db_)
             c = conn.cursor()
-            c.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, pago , cob, obs FROM {table} ORDER BY pago ASC")
+            c.execute(f"SELECT nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, pago , cob, obs FROM {table} ORDER BY pago DESC")
             records = c.fetchall()
             for record in records:
                 nome = record[0]
@@ -739,123 +807,180 @@ def cob_dia(table):
                 pago = record[3]
                 cobrar_ = record[4]
                 obs = record[5]
-                if dia_atual == data and prazo == None or prazo == 'None'.casefold():
-                    if pago == 0 or pago ==2:
-                        if cobrar_ == 1:
-                            numero = comp(nome) 
-                            if numero == None:
-                                            messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
-                                            if obs == None:
-                                                    obs = 'none'
-                                            obs_ = str(obs + " #NO NUMBER ERROR#")
-                                            dicto = {'nome': nome, 'obs': obs_}
-                                            acordo_cobdesl.append(dicto)
-                            else:
-                                if forms == True:
-                                    if who_acd(obs_dev) == True:
-                                            Bo = cobrar(nome, dia_atual, numero, navegador)
-                                            if Bo  == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome) 
-                                    elif who_acd(obs_dev) == False:
-                                            Bo = cobrar(formando, dia_atual, numero, navegador)  
-                                            if Bo == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} com formando {formando} não connseguiu enviar mensage;, OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome)
+                if dia_atual == data:
+                    if str(prazo.casefold()) != str('None'.casefold()):
+                        response_prazo = messagebox.askyesno("Possui prazo", f"""Caso {nome} possui prazo para dia {prazo}, deseja cobrar mesmo assim?""")
+                        if response_prazo == 1:
+                            continue
+                        if response_prazo == 0:
+                                                        messagebox.showwarning("Prazo", f"O caso {nome} ja possui um prazo para data futura, OBS: {obs}")
+                                                        if obs == None:
+                                                                obs = 'none'
+                                                        obs_ = str(obs + " #PRAZO#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
+                    else:
+                        if pago == 0 or pago == 2:
+                            if cobrar_ == 1:
+                                if nome not in acordo_hj and nome not in acordo_cobdesl:   
+                                    numero = comp(nome) 
+                                    if numero == None:
+                                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
+                                                        if obs == None:
+                                                                obs = 'none'
+                                                        obs_ = str(obs + " #NO NUMBER ERROR#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
+                                    else:
+                                        if forms == True:
+                                            if who_acd(obs_dev) == True:
+                                                    Bo = cobrar(nome, dia_atual, numero, navegador)
+                                                    if Bo  == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                    else:
+                                                        acordo_hj.append(nome) 
+
+                                            elif who_acd(obs_dev) == False:
+                                                    Bo = cobrar(formando, dia_atual, numero, navegador)  
+                                                    if Bo == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} com formando {formando} não connseguiu enviar mensage;, OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                    else:
+                                                        acordo_hj.append(nome)
+
+                                        else:
+                                                    Bo = cobrar(nome, dia_atual, numero, navegador)
+                                                    if Bo  == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                    else:
+                                                        acordo_hj.append(nome)
                                 else:
-                                            Bo = cobrar(nome, dia_atual, numero, navegador)
-                                            if Bo  == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + " #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome)  
-                        elif cobrar_ == 0:
-                                            messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada, OBS: {obs}")
-                                            if obs == None:
-                                                    obs = 'none'
-                                            obs_ = str(obs + " #COB. AUTOMATICA DESLIGADA#")
-                                            dicto = {'nome': nome, 'obs': obs_}
-                                            acordo_cobdesl.append(dicto)
-                                            pass
-                    elif pago == 1:
-                        pass
+                                                        messagebox.showwarning("Ja cobrado", f"O caso {nome} ja foi cobrado referente a outra data, checar prazos ou casos não cobrados por duplicata por motivo, OBS: {obs}")
+                                                        if obs == None:
+                                                                            obs = 'none'
+                                                        obs_ = str(obs + " #DUPLICATE COB#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
+                            elif cobrar_ == 0:
+                                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} esta com cobrança automatica desligada, OBS: {obs}")
+                                                        if obs == None:
+                                                                obs = 'none'
+                                                        obs_ = str(obs + " #COB. AUTOMATICA DESLIGADA#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                            pass
+                        elif pago == 1:
+                            pass
 
                 elif dia_atual == prazo:
                     if pago == 0 or pago ==2:
                         if cobrar_ == 1:
-                            numero = comp(nome) 
-                            if numero == None:
-                                            messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
-                                            if obs == None:
-                                                    obs = 'none'
-                                            obs_ = str(obs + "; PRAZO - #NO NUMBER ERROR#")
-                                            dicto = {'nome': nome, 'obs': obs_}
-                                            acordo_cobdesl.append(dicto)
-                            else:
-                                if forms == True:
-                                    if who_acd(obs_dev) == True:
-                                            bi = cob_prazo(nome, dia_atual, numero, navegador)
-                                            if bi  == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome)  
-                                    elif who_acd(obs_dev) == False:
-                                            bi = cob_prazo(formando, dia_atual, numero, navegador)
-                                            if bi  == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome)  
+                            if nome not in acordo_hj and nome not in acordo_cobdesl:
+                                numero = comp(nome) 
+                                if numero == None:
+                                                        messagebox.showwarning("Sem numero", f"O caso {nome} esta sem numero de whatsapp, OBS: {obs}")
+                                                        if obs == None:
+                                                                obs = 'none'
+                                                        obs_ = str(obs + "; PRAZO - #NO NUMBER ERROR#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
                                 else:
-                                            bi = cob_prazo(nome, dia_atual, numero, navegador)
-                                            if bi  == False:
-                                                if obs == None:
-                                                    obs = 'none'
-                                                obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
-                                                messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
-                                                dicto = {'nome': nome, 'obs': obs_}
-                                                acordo_cobdesl.append(dicto)
-                                                pass
-                                            else:
-                                                acordo_hj.append(nome)
+                                    if forms == True:
+                                        if who_acd(obs_dev) == True:
+                                                bi = cob_prazo(nome, dia_atual, numero, navegador)
+                                                if bi  == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                else:
+                                                        acordo_hj.append(nome)  
+                                        elif who_acd(obs_dev) == False:
+                                                bi = cob_prazo(formando, dia_atual, numero, navegador)
+                                                if bi  == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                else:
+                                                        acordo_hj.append(nome)  
+                                    else:
+                                                bi = cob_prazo(nome, dia_atual, numero, navegador)
+                                                if bi  == False:
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + "; PRAZO - #NO SUCH ELEMENT ERROR#")
+                                                        messagebox.showwarning("Não possivel", f"O caso {nome} não conseguiu enviar mensagem; OBS: {obs_}")
+                                                        dicto = {'nome': nome, 'obs': obs_}
+                                                        acordo_cobdesl.append(dicto)
+                                                        pass
+                                                else:
+                                                        acordo_hj.append(nome)
+                            else:
+                                                        messagebox.showwarning("Ja cobrado", f"O caso {nome} ja foi cobrado referente a outra data, checar prazos, OBS: {obs}")
+                                                        if obs == None:
+                                                            obs = 'none'
+                                                        obs_ = str(obs + " #DUPLICATE COB#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
+
                         elif cobrar_ == 0:
-                                            messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada, OBS: {obs}")
-                                            if obs == None:
-                                                    obs = 'none'
-                                            obs_ = str(obs + "; PRAZO - #COB. AUTOMATICA DESLIGADA#")
-                                            dicto = {'nome': nome, 'obs': obs_}
-                                            acordo_cobdesl.append(dicto)
-                                            pass
+                                                        messagebox.showwarning("Cobrança automatica desligada!", f"O caso {nome} , com acordo dia {data} e prazo para hoje, esta com cobrança automatica desligada, OBS: {obs}")
+                                                        if obs == None:
+                                                                obs = 'none'
+                                                        obs_ = str(obs + "; PRAZO - #COB. AUTOMATICA DESLIGADA#")
+                                                        if nome not in acordo_cobdesl:
+                                                            dicto = {'nome': nome, 'obs': obs_}
+                                                            acordo_cobdesl.append(dicto)
+                                                            pass
+                                                        else:
+                                                              pass
                     elif pago == 1:
                         pass
 
@@ -869,7 +994,7 @@ def cob_dia(table):
                     global re_cob
                     re_cob = Toplevel()
                     re_cob.title("Lista recobrados")
-                    re_cob.geometry("700x400")
+                    re_cob.geometry("700x300")
                     if saved_color == "system":
                         icon_primp = ("icons/redo_white.ico")
                     elif saved_color == "light":
@@ -933,11 +1058,14 @@ def cob_selected(table):
         response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?caso sim, tenha o celular em mãos""")
         if response == 1:
                 response_ = messagebox.askyesno("Escolha tipo de mensagem", "Sim para acordo, não para prazo")
+                navegador = 'bruh'
+                '''
                 navegador = webdriver.Chrome()
                 navegador.get("https://web.whatsapp.com/")
 
                 while len(navegador.find_elements(By.ID, 'side')) < 1: 
                     time.sleep(1)
+                '''
 
                 acordos_selec = []
                 acords_bruhh = []
@@ -1014,7 +1142,7 @@ def cob_selected(table):
                         global re_cob
                         re_cob = Toplevel()
                         re_cob.title("Lista recobrados")
-                        re_cob.geometry("700x400")
+                        re_cob.geometry("700x300")
                         if saved_color == "system":
                             icon_primp = ("icons/redo_white.ico")
                         elif saved_color == "light":
@@ -1074,25 +1202,32 @@ def cob_posicao(table):
         response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
     caso sim, tenha o celular em mãos""")
         if response == 1:
+                navegador = 'bruh'
+                '''
                 navegador = webdriver.Chrome()
                 navegador.get("https://web.whatsapp.com/")
 
                 while len(navegador.find_elements(By.ID, 'side')) < 1: 
                     time.sleep(1)
+                '''
 
-                acordos_selec = []
-                acords_bruhh = []
+                acordos_selec = list()
+                acords_notcob = list()
+                ids_a_cobrar = list()
+                nome_list = list()
+
                 x = my_tree.selection()
-                ids_a_cobrar = []
                 for record in x:
                     ids_a_cobrar.append(my_tree.item(record, 'values')[0])
+
                 conn = sqlite3.connect(_Db_)
                 cunt = conn.cursor()
-                nome_list = []
+
                 for rowid in ids_a_cobrar:
                     cunt.execute(f'SELECT rowid, nome, obs FROM {table} WHERE rowid = {rowid}')
                     nomes = cunt.fetchall()
                     nome_list.append(nomes)
+
                 for olo in nome_list:
                     case = olo[0]
                     nome_ = case[1]
@@ -1104,12 +1239,10 @@ def cob_posicao(table):
                                     obs_slc = 'none'
                                 obs_slc_ = str(obs_slc + " #NO NUMBER ERROR#")
                                 dicto = {'nome': nome_, 'obs': obs_slc_}
-                                acords_bruhh.append(dicto)
+                                acords_notcob.append(dicto)
                     else:
                         if forms == True:
                             if who_acd(obs_dev) == True:
-                                print("----------------------------------------------------------------------------------")
-                                print(f"Pedindo posição do acordo do {nome_}, acordo sendo com o devedor {numero}, porem possui formando")
                                 Bo = cobrar_posiçao(nome_, numero, navegador) 
                                 if Bo  == False:
                                     if obs_slc == None:
@@ -1121,10 +1254,7 @@ def cob_posicao(table):
                                     pass
                                 else:
                                     acordos_selec.append(nome_)   
-                                print(f"{nome_} cobrado(a)")  
                             elif who_acd(obs_dev) == False:
-                                print("----------------------------------------------------------------------------------")
-                                print(f"Pedindo posição do acordo {nome_}, acordo sendo com o formando: {formando} {numero}")
                                 Bo = cobrar_posiçao(formando, numero, navegador)
                                 if Bo  == False:
                                     if obs_slc == None:
@@ -1136,10 +1266,7 @@ def cob_posicao(table):
                                     pass
                                 else:
                                     acordos_selec.append(nome_)    
-                                print(f"{nome_} cobrado(a)") 
                         else:
-                                print("----------------------------------------------------------------------------------")
-                                print(f"Pedindo posição do acordo {nome_}, acordo sendo com o devedor {numero}")
                                 Bo = cobrar_posiçao(nome_, numero, navegador)
                                 if Bo  == False:
                                     if obs_slc == None:
@@ -1151,19 +1278,18 @@ def cob_posicao(table):
                                     pass
                                 else:
                                     acordos_selec.append(nome_)   
-                                print(f"{nome_} cobrado(a)") 
 
-                if len(acords_bruhh) >= 1:              
+                if len(acords_notcob) >= 1:              
                     response__ = messagebox.askyesno("Pronto!", f"""Todos os casos selecionados foram pedidos poosição!
     foram cobrados {len(acordos_selec)}
     casos que não foi possivel cobrar:
-    {acords_bruhh}
+    {acords_notcob}
     Gostaria de tentar cobrar os não cobrados?""")
                     if response__ == 1:
                         global re_cob
                         re_cob = Toplevel()
                         re_cob.title("Lista recobrados")
-                        re_cob.geometry("700x400")
+                        re_cob.geometry("700x300")
                         if saved_color == "system":
                             icon_primp = ("icons/redo_white.ico")
                         elif saved_color == "light":
@@ -1198,7 +1324,7 @@ def cob_posicao(table):
                         my_treere.heading("nome", text="nome", anchor=W)
                         my_treere.heading("obs", text="obs", anchor=W)
 
-                        for i, res in enumerate(acords_bruhh):
+                        for i, res in enumerate(acords_notcob):
                             my_treere.insert("",'end',iid=res,
                             values=(i,res["nome"], res["obs"]))
                         
@@ -1208,7 +1334,7 @@ def cob_posicao(table):
                     elif response__ == 0:
                         pass
 
-                elif len(acords_bruhh) == 0:
+                elif len(acords_notcob) == 0:
                     messagebox.showinfo("Pronto!", f"""Todos os acordos selecionados foram cobrados posição!
                 foram cobrados {len(acordos_selec)}
                 """)
@@ -1289,7 +1415,7 @@ caso sim, tenha o celular em mãos""")
                 pass 
 
 
-#Sub level of Main page
+#Sub level of Main month page
 
 def open_list(mes):#PAGE
         """Open page with subtable of main 'mes' page, with all broken deals """
@@ -1484,6 +1610,7 @@ def update_table_un(table):
         clear_all_un()
         query_db_unmade(table)
 
+
 #Sub levels of Year Agenda page 2x
 
 def add_month():#PAGE
@@ -1499,49 +1626,55 @@ def add_month():#PAGE
     elif saved_color == "dark":
             icon_primp = ("icons/add_white.ico")
     inf.wm_iconbitmap(icon_primp)
-    inf.minsize(650, 400)
-    inf.maxsize(1200, 800)
-
-    frame = custk.CTkFrame(inf)
-    frame.pack(padx=10, ipadx=20)
-    tree__ = ttk.Treeview(frame)
-    tree__.pack()
+    inf.minsize(650, 380)
+    inf.maxsize(1200, 350)
 
     open_btn = custk.CTkButton(inf, text="Selecione arquivo a adicionar", command=lambda:select_file(tree__), anchor= S)
-    open_btn.pack(pady=5)
-
-    logi_btn = custk.CTkButton(inf, text="Logistica de arquivos", command=logist_page, anchor= S)
-    logi_btn.pack(pady=5)
+    open_btn.pack(pady=5, ipadx=50)
+    
+    frame = custk.CTkFrame(inf)
+    frame.pack(padx=10, ipadx=50, pady=10)
+    tree__ = ttk.Treeview(frame)
+    tree__.pack(pady=5)
 
     frame_obs = custk.CTkFrame(inf)
-    frame_obs.pack(ipadx=25, pady=5)
+    frame_obs.pack(ipadx=25)
 
     var = tkinter.StringVar(inf)
     drop = custk.CTkOptionMenu(frame_obs, values = options_M, variable= var, command=callback_)
     drop.pack(pady=5)
 
     var.set('Select email')
-    comit_month = custk.CTkButton(frame_obs, text="Add month", command=lambda:adding_month(selec, filename))
+    comit_month = custk.CTkButton(frame_obs, text="Add month", command=lambda:adding_month(selec))
     comit_month.pack()
+
+    logi_btn = custk.CTkButton(inf, text="Logistica de arquivos", command=logist_page, anchor=S, fg_color='darkgreen')
+    logi_btn.pack(pady=5, ipadx=50)
 
     global label
     label = custk.CTkLabel(frame_obs, text='')
-    label.pack(pady=0, padx=0)
    
 
-def logist_page():#PAGE TODO make it bigger
+def logist_page():#PAGE
     """Is the hub for the logistics for the comparing of the 2 files asked, and the creation on a new excel"""
     global logit, tree_log1, tree_log2
     logit = custk.CTkToplevel()
     logit.title("Logistica dos arquivos")
+    logit.state('zoomed')
+    logit.geometry('1920x1090')
 
     frame_lo = custk.CTkFrame(logit)
-    frame_lo.grid(row=1, column=0, columnspan=2, padx=10, pady=5, ipadx=20)
+    frame_lo.grid(row=1, column=0, columnspan=2, padx=10, pady=5)
 
-    tree_log1 = ttk.Treeview(frame_lo)
+    tree_log1 = ttk.Treeview(frame_lo, height=40)
     tree_log1.grid(row=0, column=0, padx=10)
-    tree_log2 = ttk.Treeview(frame_lo)
+    tree_log1["column"] = ("X")
+    tree_log1.column("X", width = 725, stretch=NO)
+
+    tree_log2 = ttk.Treeview(frame_lo, height=40)
     tree_log2.grid(row=0, column=1, padx=10)
+    tree_log2["column"] = ("X")
+    tree_log2.column("X", width = 725, stretch=NO)
 
     orq_btn1 = custk.CTkButton(logit, text="Selecione arquivo - Analise 'Mes' ", command=lambda:select_file(tree_log1), anchor= S)
     orq_btn1.grid(row=0, column=0, pady=5, padx=5)
@@ -1549,14 +1682,14 @@ def logist_page():#PAGE TODO make it bigger
     orq_btn2 = custk.CTkButton(logit, text="Selecione arquivo - Docs. por Func.", command=lambda:select_file(tree_log2), anchor= S)
     orq_btn2.grid(row=0, column=1, pady=5, padx=5)
 
-    org_btn = custk.CTkButton(logit, text="Fazer analise", command=lambda:analise(tree_log1_filename, tree_log2_filename), anchor= S)
-    org_btn.grid(row=2, column=0, columnspan=2, pady=5, padx=5)
+    org_btn = custk.CTkButton(logit, text="Fazer analise", command=lambda:analise(tree_log1_filename, tree_log2_filename), anchor= S, fg_color='darkgreen')
+    org_btn.grid(row=2, column=0, columnspan=2, pady=5, padx=5, ipadx=35)
 
 
 #Helper functions
 
-def analise(file_a, file_b): # !!! TODO
-    """Given both files asked in 'logisti_page' this functions contains all the logit to compare both files and spit out a new one using various filters to be added later"""
+def analise(file_a, file_b):
+    """Given both files asked in 'logisti_page' this functions contains all the logit to compare both files and spit out a new one using various filters to be added later to the database in the 'add_month' page. The two files, being one from my Access 2010 runtime sistem, and the other from the excel file produced by the 'get_excel' function on the main month page."""
     analise = pd.read_excel(file_a)
     dev_func = pd.read_excel(file_b)
     dev_average = month_average(file_b)
@@ -1596,32 +1729,40 @@ def analise(file_a, file_b): # !!! TODO
             num_month = date_b.month
  
             if int(anal[f'pago{i}']) == 2:
-                        already_add_pg2.append(func[f'nome{x}'])
+                        already_add_pg2.append(anal[f'nome{i}'])
 
                         a = {'Nome': anal[f'nome{i}'], 'Data': data_, 'prazo': anal[f'prazo{i}'], 'valor': anal[f'valor{i}'], 'pago':2, 'cob': cob[1], 'obs': anal[f'obs{i}']}
                         final_list.append(a)
 
             if int(anal[f'pago{i}']) == 0 and num_month < dev_average and anal[f'nome{i}'] not in already_add_pg2:
-                        already_add_pg2.append(func[f'nome{x}'])
+                        already_add_pg2.append(anal[f'nome{i}'])
 
                         b = {'Nome': anal[f'nome{i}'], 'Data': data_, 'prazo': anal[f'prazo{i}'], 'valor': anal[f'valor{i}'], 'pago': 2, 'cob': cob[1], 'obs': anal[f'obs{i}']}
                         final_list.append(b)
 
             if int(anal[f'pago{i}']) == 0 and num_month > dev_average and anal[f'nome{i}'] not in already_add:
-                        already_add.append(func[f'nome{x}'])
+                        already_add.append(anal[f'nome{i}'])
 
                         c = {'Nome': anal[f'nome{i}'], 'Data': data_, 'prazo': anal[f'prazo{i}'], 'valor': anal[f'valor{i}'], 'pago': 0, 'cob': cob[1], 'obs': anal[f'obs{i}']}
                         final_list.append(c)
 
-                    
+    for i, anal in enumerate(analise_list):       
             for x, func in enumerate(func_list):
+                ts = str(anal[f'obs{i}'])
+                cob = cob_know(ts)
                 data_ = date_manip(func[f'data{x}'])
 
-                if func[f'nome{x}'] == anal[f'nome{i}'] and anal[f'nome{i}'] in already_add_pg2 and func[f'nome{x}'] not in already_add:
+                if func[f'nome{x}'] == anal[f'nome{i}'] and anal[f'nome{i}'] in already_add_pg2 and func[f'nome{x}'] and anal[f'nome{i}'] not in already_add:
                         already_add.append(func[f'nome{x}'])
 
-                        d = {'Nome': func[f'nome{x}'], 'Data': data_, 'prazo': 'None', 'valor': func[f'valor{x}'], 'pago': 0, 'cob': cob[1], 'obs': cob[0] + 'Mes passado atrasado '}
+                        d = {'Nome': func[f'nome{x}'], 'Data': data_, 'prazo': 'None', 'valor': func[f'valor{x}'], 'pago': 0, 'cob': 0, 'obs': cob[0] + 'Mes passado atrasado '}
                         final_list.append(d)
+
+    for i, anal in enumerate(analise_list):       
+            for x, func in enumerate(func_list):
+                ts = str(anal[f'obs{i}'])
+                cob = cob_know(ts)
+                data_ = date_manip(func[f'data{x}'])
 
                 if func[f'nome{x}'] == anal[f'nome{i}'] and int(anal[f'pago{i}']) != 2 and int(anal[f'pago{i}']) != 1 and func[f'nome{x}'] not in already_add:
                         already_add.append(func[f'nome{x}'])
@@ -1642,7 +1783,13 @@ def analise(file_a, file_b): # !!! TODO
                         g = {'Nome': func[f'nome{x}'], 'Data': data_, 'prazo': 'None', 'valor': func[f'valor{x}'], 'pago': 0, 'cob': 1, 'obs': cob[0]}
                         final_list.append(g)
 
-    nomes, data, prazo, valor, pago, obs, cob = list() 
+    nomes = list()
+    data= list()
+    prazo= list()
+    valor= list()
+    pago= list() 
+    obs= list() 
+    cob = list() 
 
     for y, final in enumerate(final_list):
             nomes.append(final['Nome'])
@@ -1722,9 +1869,11 @@ def select_file(tree_type):
                 global df
                 df = pd.read_excel(filename, dtype=str)
             except ValueError:
-                PlaceHolder.config(text="File could not be opened", pady=20, ipady=10)
+                label.pack()
+                label.config(text="File could not be opened", pady=20, ipady=10)
             except FileNotFoundError:
-                PlaceHolder.config(text="File Not Found",pady=20, ipady=10)
+                label.pack()
+                label.config(text="File Not Found",pady=20, ipady=10)
     clear_treeview(tree_type)
 
     if str(tree_type) == '.!ctktoplevel3.!ctkframe.!treeview'.casefold():
@@ -1734,6 +1883,7 @@ def select_file(tree_type):
         tree_log1["show"] = "headings"
 
         for col in tree_type["column"]:
+            tree_log1.column(col, width = 1)
             tree_log1.heading(col, text=col)
 
         df_rows = (df.to_numpy().tolist())
@@ -1747,6 +1897,7 @@ def select_file(tree_type):
         tree_log2["show"] = "headings"
 
         for col in tree_type["column"]:
+            tree_log2.column(col, width = 1)
             tree_log2.heading(col, text=col)
 
         df_rows = (df.to_numpy().tolist())
@@ -1868,6 +2019,7 @@ def adding_month(selection):
     conn.commit()
     conn.close()
 
+
 #Helper Functions focused on DATABASE connection
 
 def conn_db(command):
@@ -1879,22 +2031,31 @@ def conn_db(command):
     conn.commit()
     conn.close()
 
-def query_database(table):# !!! TODO 
-    """Opens the database given chosen month, and if it exists, appends data to treeview on the main page. It contains also added filtering by taking all the dates that are weekends, and adding the days nescessary so its a valid week day"""
+def query_database(table):
+    """Opens the database given chosen month, and if it exists, appends data to treeview on the main page. It also contains added filtering by taking all the dates that are weekends, and adding the days nescessary so its a valid week day"""
+
     my_tree.delete(*my_tree.get_children())
     conn = sqlite3.connect(_Db_)
     c = conn.cursor()
+
+    parser = ConfigParser()
+    parser.read("config_files/agenda_ops.ini")
+    saved_show = parser.get('colors', 'cleb')
+
     if saved_show == 'Y':
             c.execute(f"SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} ORDER BY pago DESC, data")
     elif saved_show == 'N':
             c.execute(f"""SELECT rowid, nome, STRFTIME('%d/%m/%Y', data) as formated_data, prazo, valor, cob, pago, obs FROM {table} WHERE pago <> 1 ORDER BY pago DESC, data""")
     records = c.fetchall()
     for record in records:
+                
+                month = str(record[2][3] + record[2][4])
+                year = str(record[2][6] + record[2][7] + record[2][8] + record[2][9])
                 current_data = datetime.datetime.strptime(record[2], "%d/%m/%Y")
                 weekcheck = datetime.datetime.strptime(record[2], "%d/%m/%Y").strftime("%A")
 
                 #check weekends and end of month dates
-                if weekcheck == "Saturday" and str(record[2]) == '30/0 /20' or str(record[2]) == '31/0 /20' or str(record[2]) == '28/02/20':
+                if weekcheck == "Saturday" and str(record[2]) == f'30/{month}/{year}' or str(record[2]) == f'31/{month}/{year}' or str(record[2]) == f'28/02/{year}':
                     tree_data_ = current_data - datetime.timedelta(days=1)
                     tree_data = tree_data_.strftime("%d/%m/%Y")
                     c.execute(f"""UPDATE {table} SET
@@ -1904,8 +2065,8 @@ def query_database(table):# !!! TODO
                                 'data': tree_data_,
                                 'oid': record[0]})
 
-                elif weekcheck == "Sunday" and str(record[2]) == '30/0 /20' or str(record[2]) == '31/0 /20' or str(record[2]) == '28/02/20':
-                    tree_data_ = current_data - datetime.timedelta(days=1)
+                elif weekcheck == "Sunday" and str(record[2]) == f'30/{month}/{year}' or str(record[2]) == f'31/{month}/{year}' or str(record[2]) == f'28/02/{year}':
+                    tree_data_ = current_data - datetime.timedelta(days=2)
                     tree_data = tree_data_.strftime("%d/%m/%Y")
                     c.execute(f"""UPDATE {table} SET
                             data = :data
@@ -2042,7 +2203,7 @@ def search_records(table):
             my_tree.insert(parent='', index='end', text='', values=(l['rowid'], l['nome'], l['data'], l['prazo'], l['valor'], l['cob'], l['pag'], l['obs']))
 
 
-
+#ROOT
 if __name__ == "__main__":
     root = custk.CTk()
     root.title("Agenda 1.4")
@@ -2055,8 +2216,13 @@ if __name__ == "__main__":
             icon_primp = ("icons/home_page.ico")
     elif saved_color == "dark":
             icon_primp = ("icons/agenda_white.ico")
-
     root.wm_iconbitmap(icon_primp)
+
+    #Style for treeview
+    style = ttk.Style()
+    style.theme_use("classic")
+    style.configure('Treeview', background='silver', foreground='black', fieldbackground='silver')
+    style.map('Treeview', background=[('selected', '#009EFF')])
 
     main_title = custk.CTkLabel(root, text="Agenda 2023", anchor=CENTER, padx=3, pady=2, font=("Times New Roman", 50))
     main_title.grid(column=0, row=0, columnspan = 3, ipadx=100, ipady=30)
@@ -2065,11 +2231,10 @@ if __name__ == "__main__":
     credit.grid(column=0, row=3)
     credit.bind("<ButtonPress-1>", lambda e:callback("https://github.com/Superjoa10"))
 
-    #main page button to open page
     open_btn = custk.CTkButton(root, text="Abrir agenda", command=year_agenda, anchor= CENTER)
     open_btn.grid(column=0, row=1, columnspan=3, ipadx=10, pady=30)
 
-    open_btn = custk.CTkButton(root, text="Testes", command=tests_page, anchor=CENTER)
+    open_btn = custk.CTkButton(root, text="Opções", command=option_page, anchor=CENTER)
     open_btn.grid(column=0, row=2, columnspan=3, ipadx=10, pady=10)
     
 
