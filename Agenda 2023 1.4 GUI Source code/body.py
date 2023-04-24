@@ -387,13 +387,12 @@ def cob_lembrete():
         response__ = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
 caso sim, tenha o celular em mãos""")
         if response__ == 1:
-                navegador_lem = 'bruh'
-                '''
+            
                 navegador_lem = webdriver.Chrome()
                 navegador_lem.get("https://web.whatsapp.com/")
                 while len(navegador_lem.find_elements(By.ID, 'side')) < 1: 
                         time.sleep(1)
-                '''
+                
                 for record_re in x_lem:
                     nome_ = (tree_lem.item(record_re, 'values')[1])
                     data_acd = (tree_lem.item(record_re, 'values')[2])
@@ -782,14 +781,12 @@ def cob_dia(table):
         8. After all is done, gives the option wether you'd like to get a list of the cases that where unsuccesfull. Given you'd like, it opens a secondery page with a threeview and a option to retry the selected ones (Only gives the option if there where any unsuccesfull ones) """
         response_dia = messagebox.askyesno("Cobrar dia", """Voce tem certeza que gostaria de cobrar os casos do dia?""")
         if response_dia == 1:
-            navegador = 'bruh'
-            '''
+
             navegador = webdriver.Chrome()
             navegador.get("https://web.whatsapp.com/")
 
             while len(navegador.find_elements(By.ID, 'side')) < 1: 
                 time.sleep(1)
-            '''
 
             acordo_hj = list()
             acordo_cobdesl = list()
@@ -1058,14 +1055,11 @@ def cob_selected(table):
         response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?caso sim, tenha o celular em mãos""")
         if response == 1:
                 response_ = messagebox.askyesno("Escolha tipo de mensagem", "Sim para acordo, não para prazo")
-                navegador = 'bruh'
-                '''
                 navegador = webdriver.Chrome()
                 navegador.get("https://web.whatsapp.com/")
 
                 while len(navegador.find_elements(By.ID, 'side')) < 1: 
                     time.sleep(1)
-                '''
 
                 acordos_selec = []
                 acords_bruhh = []
@@ -1202,14 +1196,13 @@ def cob_posicao(table):
         response = messagebox.askyesno("Cobrar selecionado", """Voce tem certeza que gostaria de cobrar os casos selecionados?
     caso sim, tenha o celular em mãos""")
         if response == 1:
-                navegador = 'bruh'
-                '''
+
                 navegador = webdriver.Chrome()
                 navegador.get("https://web.whatsapp.com/")
 
                 while len(navegador.find_elements(By.ID, 'side')) < 1: 
                     time.sleep(1)
-                '''
+
 
                 acordos_selec = list()
                 acords_notcob = list()
