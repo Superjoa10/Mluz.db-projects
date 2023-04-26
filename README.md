@@ -9,4 +9,10 @@ This files describes the contents of the repository(1), as well as a tutorial on
 
 # 1. Directories:
 
+  * Agenda 2023 1.4 GUI Source code: 
+  contains the source code for the EXE APP Agenda 2023 1.4 in the APPS directorie.
+    *files:
+    
+
+
 observarions: The repository contains mostly .TCL files becouse of the heavy imports the APP has, most likely from CUSTOMTKINTER that bring loads of assets in order to make the APP look more modern, or SELENIUM.
