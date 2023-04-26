@@ -35,7 +35,10 @@ This files describes the contents of the repository(1), as well as a tutorial on
   Contains tne source code for the EXE APP Cobrar_setor in the APPS directorie.
   
     * Cobrar_setor.py:
-    A command line tool that uses the pre-existing filters (sector / setor) in my works Access 2010 Runtime database, as well as 
+    A command line tool that uses the pre-existing filters (sector / setor) in my works Access 2010 Runtime database, as well as employee id (funcionario), to send automatic messeges to all debtors that match the filters, being the messege Whatsapp, E-mail or both, it also gives the option for general analisys.(more info on the use case cenerous section(3).
+    
+    * gett_gender.py: 
+    Very simular to soul.py in the Agenda application, it contains helper functions like the name of the file, gender detection, as well as all the functions for automating the messeges send by Selenium and 
   
     * Devedor.csv:
     A part of my works Database, where the program takes all the information about a given case with filters, the infomation being numbers, emails, document type and general information for messege generation.
