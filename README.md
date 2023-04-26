@@ -8,3 +8,5 @@ This files describes the contents of the repository(1), as well as a tutorial on
 
 
 # 1. Directories:
+
+observarions: The repository contains mostly tlc files becouse of the heavy imports the APP has, like SELENIUM or CUSTOMTKINTER that bring loads 
