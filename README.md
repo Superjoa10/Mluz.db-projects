@@ -7,7 +7,7 @@ PC-WORK-BRANCH contains Legacy code for the ideas of the automations presented i
 This files describes the contents of the repository(1), as well as a tutorial on how to test the Apps various functions(2) and a demonstration of the use case cenarious(3).
 
 
-# 1. Directories:
+# 1. Directorie discriptions:
   * Apps:
   
       * Agenda 2023 1.4 FILES: contains the EXE file for the application described in the 'Agenda 2023 1.4 GUI Source code' directory, for more info on how to test it check for the tutorio section on this file(2);
@@ -58,8 +58,22 @@ This files describes the contents of the repository(1), as well as a tutorial on
   Contains some test data to be used in the tutorial section of this file(2), only used in the tutorial for the Agenda application.
 
 
-# 
 PS: The repository contains mostly .TCL files becouse of the heavy imports the APP has, most likely from CUSTOMTKINTER that bring loads of assets in order to make the APP look more modern, or SELENIUM.
 
 
 # 2. Tutorials:
+
+  * Agenda 2023 1.4:
+    1. Install the whole 'Agenda 2023 1.4 FILES' file, and create a shortcut to the 'Agenda 2023 1.4.EXE' APP and 'config_files' for ease of navegation.(OPTIONAL if running the Source code)DevOBS.
+    
+    2. Open the Devedor.csv file, add a valid phone number (PLEASE USE A PERSONAL OR FAMILY NUMBER) to the sections where it is asked (ROW AD - 'DevOBS'), it'll be asked as * INSERT NUM HERE * . The number MUST contain the country especific code (Brazil being 55), in my version it is not nessesery as i only use it with brasilian numbers.
+   
+# 
+  * Cobrar_setor:
+    1. Install the whole 'Cobrar_setor FILES' file, and create a shortcut to the 'Cobrar_setor.EXE' APP. (OPTIONAL if running the Source code) 
+
+PS: *Your sistem must be able to run Python 3.10 minimum to run any of the EXE files.* The information in the Sample files, and Devedor.CSV is all fictional and used as exemples only, to protect the information in my works database, but show how it the information is presented in a real world cenario.
+
+# 3. Use case Scenarios:
+
+Disclaimer: *I do not take resposability of any misuse, spaming or abuseve use of my code, this is for demonstrarion and education purposes only.*
