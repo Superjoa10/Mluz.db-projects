@@ -4,7 +4,7 @@ as well as automation of some boring tasks i have at my job, such as sending mes
 *MAIN BRANCH contains the project turned to EXE files / APPS.*
 PC-WORK-BRANCH contains Legacy code for the ideas of the automations presented in the main branch.
 
-This files describes the contents of the repository, as well as a tutorial on how to test the Apps various functions, and demonstration of use.
+This files describes the contents of the repository(1), as well as a tutorial on how to test the Apps various functions(2) and a demonstration of the use case cenarious(3).
 
 
-# Directories:
+# 1. Directories:
