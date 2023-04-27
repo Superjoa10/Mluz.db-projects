@@ -72,7 +72,9 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
    
     4. The current page is where you select which month you'd like to open, if it doesn't exist i'll give a message. Before being able to open any specific agenda follow the next steps
     
-    5. Click the 'add mes' - add month button, now you have 2 choices, either use the 'add_sys_sample'
+    5. Click the 'add mes' - add month button, now you have 2 choices, either add directly or test the comparing of to files to create the file, IF direct click on the use the 'selecionar arquivo a adicionar' - select file to add button, and select the 'add_sys sample' file in the sample data directory, select a month to add (little error in the app here), than click the 'add month' button. If correct it'll show a confirmation messege. if you choose this step, skip to step 7 - XII else follow step 6 to test the creation of the file.
+    
+    6. To test the creation of the add month file (for why i need this logic see use case cenarious(3)) , click on the 'Logistica de arquivo' - File logic button, you'll be presented with a fullscrean page with two treeview and 2 buttons with distinct names. the one with 'Analise 'mes'' you should select the 
    
 # 
   * Cobrar_setor:
