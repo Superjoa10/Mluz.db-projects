@@ -1,5 +1,5 @@
 # *Mluz.db-projects is a combination of my projects that uses my works Database for debt colletion*
-as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors, and the ones i've got deals with.
+as well as automation of some boring tasks i have at my job, such as sending messeges to new debtors(Cob_Setor), and the ones i've got deals with(Agenda 2023).
 
 *MAIN BRANCH contains the project turned to EXE files / APPS.*
 PC-WORK-BRANCH contains Legacy code for the ideas of the automations presented in the main branch.
@@ -111,7 +111,13 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
    
 # 
   * Cobrar_setor:
-    1. Install the whole 'Cobrar_setor FILES' file, and create a shortcut to the 'Cobrar_setor.EXE' APP. (OPTIONAL if running the Source code) 
+     1. Install the whole 'Cobrar_setor FILES' file, and create a shortcut to the 'Cobrar_setor.EXE' APP. (OPTIONAL if running the Source code) 
+    
+     2. Open the Devedor.csv file, add a valid phone number and email (PLEASE USE A PERSONAL OR FAMILY NUMBER AND EMAIL) to the sections where it is asked (ROW AD - 'DevOBS'), it'll be asked as * INSERT NUM HERE * and * INSERT E-MAIL HERE * . The number MUST contain the country especific code (Brazil being 55), in my version it is not nessesery as i only use it with brasilian numbers.
+     
+     3. Open the app or run the python file, it'll open the command line with a few options.
+     
+     4. Cob functions, being any of them, only difference being the metod in which to send the message. If whastapp or all it'll ask for you to login to whatsapp via your phones app QRcode. It'll ask for a few filters before running like the 'setor' sector and employees (for more info on the meaning and nessesity of the sector see use case cenarious(3))
 
 PS: *Your sistem must be able to run Python 3.10 minimum to run any of the EXE files.* The information in the Sample files, and Devedor.CSV is all fictional and used as exemples only, to protect the information in my works database, but show how it the information is presented in a real world cenario.
 
