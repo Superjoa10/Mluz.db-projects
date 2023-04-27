@@ -78,16 +78,23 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
     
     7. Go back to the main page and select the month you just added the data to, after this you can test the various buttons, and dropdown menus for the different actions.
     
+    8. General functions and features - 
+  
+    Click on a record to highlight it on the screen below; you can un-select it by clicking the 'limpar campos' clear entries button; You can update any info from a record by highlighting it than clicking on the 'aplicar mudança' aplie change button, most usefull for turning the deal to 'pago' payed from 0 (not payed) to 1 (payed) or * (Past due by more than a month); Pesquisar - search option menu on the top left corner, has the 'pesquisar por nome' search by name option which opens a page where you can search the name and it returns a list sorted by the closest to the name given, than the 'Resetar' reset option which returns the treeview to it's original position; Options 'Mostrar pagos' and 'não mostrar pagos' are Show paid, and do not show paid in this order
+    
     8. Cobrar functions / dropdown menu options - 
     
     This functions share some functinaleties, being, they all prompt you to log in with your phone and whatsapp account via QRcode; they all try to guess the gender of the person, if ambiguious it'll ask for your manual definintion; they all record the most common reasons for errors in sending the message like Selenium not finding the element to click, a lack of a valid phone number or the var for either the program should or not send the messege, so if any errors exist it'll ask if you'd like to open a page where you can visualize or try again, showing the name of the case and the reason.
     
-      * Cob. dia - to test this one you should select each one and change the date to the day you are running the test. click the button, than the program will search the 'devedor.csv' for the record with the same name, if the 'cob'  variable is 1, meaning you'd like to send the messege, it'll search for the number, and if found it'll send the messege normalie, else if it doesn't find a number it'll prompt separete the reason for the error.After it'll show you how many where succesfull and how many had erros, if any had issues it'll to open a page with the reasons.
+      * Cob. dia - to test this one you should select each one and change the date to the day you are running the test, or the prazo in the same molds as the date. click the button, than the program will search the 'devedor.csv' for the record with the same name, if the 'cob'  variable is 1, meaning you'd like to send the messege, it'll search for the number, and if found it'll send the messege normalie, else if it doesn't find a number it'll prompt separete the reason for the error.After it'll show you how many where succesfull and how many had erros, if any had issues it'll to open a page with the reasons.
       
-      * Cob. selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + RIGHT CLICK' command, sending a very similar message.
+      * Cob. selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + LEFT CLICK' command, sending a very similar message.
       
-      * Posição Selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + RIGHT CLICK' command, sending a differente message, asking for a answer from the debtor about the deal.
+      * Posição Selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + LEFT CLICK' command, sending a differente message, asking for a answer from the debtor about the deal.
     
+    9. Opções acordo fuctions / Dropdown menu options -
+    
+      * Add acordo - Clicking the 'limpar campos' clear entries button, and inserting all the currect information on the entries, than clicking in the button should add the record to the database and show it on the treeview. Take in to consideration the filters present, like the 'valor' should be a Float point integer, without any ',', the prazo is more accepting of errors but if it's not currectly formated the program will not detect it, it also won't add without the cob and pago
     
     
    
