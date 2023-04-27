@@ -72,9 +72,24 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
    
     4. The current page is where you select which month you'd like to open, if it doesn't exist i'll give a message. Before being able to open any specific agenda follow the next steps
     
-    5. Click the 'add mes' - add month button, now you have 2 choices, either add directly or test the comparing of to files to create the file, IF direct click on the use the 'selecionar arquivo a adicionar' - select file to add button, and select the 'add_sys sample' file in the sample data directory, select a month to add (little error in the app here), than click the 'add month' button. If correct it'll show a confirmation messege. if you choose this step, skip to step 7 - XII else follow step 6 to test the creation of the file.
+    5. Click the 'add mes' - add month button, now you have 2 choices, either add directly or test the comparing of to files to create the file, IF direct click on the use the 'selecionar arquivo a adicionar' - select file to add button, and select the 'add_sys sample' file in the sample data directory (should apear in the treeview), select a month to add (little error in the app here), than click the 'add month' button. If correct it'll show a confirmation messege. if you choose this step, skip to step 7 - XII else follow step 6 to test the creation of the file.
     
-    6. To test the creation of the add month file (for why i need this logic see use case cenarious(3)) , click on the 'Logistica de arquivo' - File logic button, you'll be presented with a fullscrean page with two treeview and 2 buttons with distinct names. the one with 'Analise 'mes'' you should select the 
+    6. To test the creation of the add month file (for why i need this logic, and file representantion see use case cenarious(3)) , click on the 'Logistica de arquivo' - File logic button, you'll be presented with a fullscrean page with two treeview and 2 buttons with distinct names. the one with 'Analise 'mes'' you should select the 'analise_sample' file in the Sample data directory (should appear on the respective treeview), and for the 'Devedores por funcionario' you should select the 'Devedores por funcionario sample' om the sample data directory, than click the 'fazer analise' button, if currect i'll ask for an output directory for the file. After that just repeat step 5 - X.
+    
+    7. Go back to the main page and select the month you just added the data to, after this you can test the various buttons, and dropdown menus for the different actions.
+    
+    8. Cobrar functions / dropdown menu options - 
+    
+    This functions share some functinaleties, being, they all prompt you to log in with your phone and whatsapp account via QRcode; they all try to guess the gender of the person, if ambiguious it'll ask for your manual definintion; they all record the most common reasons for errors in sending the message like Selenium not finding the element to click, a lack of a valid phone number or the var for either the program should or not send the messege, so if any errors exist it'll ask if you'd like to open a page where you can visualize or try again, showing the name of the case and the reason.
+    
+      * Cob. dia - to test this one you should select each one and change the date to the day you are running the test. click the button, than the program will search the 'devedor.csv' for the record with the same name, if the 'cob'  variable is 1, meaning you'd like to send the messege, it'll search for the number, and if found it'll send the messege normalie, else if it doesn't find a number it'll prompt separete the reason for the error.After it'll show you how many where succesfull and how many had erros, if any had issues it'll to open a page with the reasons.
+      
+      * Cob. selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + RIGHT CLICK' command, sending a very similar message.
+      
+      * Posição Selec - Similar to cob dia, but only sends to the ones that are selected via the 'CTRL + RIGHT CLICK' command, sending a differente message, asking for a answer from the debtor about the deal.
+    
+    
+    
    
 # 
   * Cobrar_setor:
