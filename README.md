@@ -64,9 +64,15 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
 # 2. Tutorials:
 
   * Agenda 2023 1.4:
-    1. Install the whole 'Agenda 2023 1.4 FILES' file, and create a shortcut to the 'Agenda 2023 1.4.EXE' APP and 'config_files' for ease of navegation.(OPTIONAL if running the Source code)DevOBS.
+    1. Install the whole 'Agenda 2023 1.4 FILES' file, and create a shortcut to the 'Agenda 2023 1.4.EXE' APP and 'config_files' for ease of navegation.(OPTIONAL if running the Source code).
     
     2. Open the Devedor.csv file, add a valid phone number (PLEASE USE A PERSONAL OR FAMILY NUMBER) to the sections where it is asked (ROW AD - 'DevOBS'), it'll be asked as * INSERT NUM HERE * . The number MUST contain the country especific code (Brazil being 55), in my version it is not nessesery as i only use it with brasilian numbers.
+    
+    3. Now you should open the APP or run the body.py file, and click the 'abrir agenda' - open agenda button
+   
+    4. The current page is where you select which month you'd like to open, if it doesn't exist i'll give a message. Before being able to open any specific agenda follow the next steps
+    
+    5. Click the 'add mes' - add month button, now you have 2 choices, either use the 'add_sys_sample'
    
 # 
   * Cobrar_setor:
