@@ -72,7 +72,7 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
    
     4. The current page is where you select which month you'd like to open, if it doesn't exist i'll give a message. Before being able to open any specific agenda follow the next steps
     
-    5. Click the 'add mes' - add month button, now you have 2 choices, either add directly or test the comparing of to files to create the file, IF direct click on the use the 'selecionar arquivo a adicionar' - select file to add button, and select the 'add_sys sample' file in the sample data directory (should apear in the treeview), select a month to add (little error in the app here), than click the 'add month' button. If correct it'll show a confirmation messege. if you choose this step, skip to step 7 - XII else follow step 6 to test the creation of the file.
+    5. Click the 'add mes' - add month button, now you have 2 choices, either add directly or test the comparing of to files to create the file, IF direct click on the use the 'selecionar arquivo a adicionar' - select file to add button, and select the 'add_sys sample' file in the sample data directory (should apear in the treeview), select a month to add (little error in the app here), than click the 'add month' button. If correct it'll show a confirmation messege. It contains a filter in which it skips the dates where it is weekends, and if the weekend is in the last day of the month it detects and does the change accordingly. if you choose this step, skip to step 7 - XII else follow step 6 to test the creation of the file.
     
     6. To test the creation of the add month file (for why i need this logic, and file representantion see use case cenarious(3)) , click on the 'Logistica de arquivo' - File logic button, you'll be presented with a fullscrean page with two treeview and 2 buttons with distinct names. the one with 'Analise 'mes'' you should select the 'analise_sample' file in the Sample data directory (should appear on the respective treeview), and for the 'Devedores por funcionario' you should select the 'Devedores por funcionario sample' om the sample data directory, than click the 'fazer analise' button, if currect i'll ask for an output directory for the file. After that just repeat step 5 - X.
     
@@ -80,10 +80,11 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
     
     
     8. General functions and features - 
-  
+      
       * Click on a record to highlight it on the screen below; 
       * you can un-select it by clicking the 'limpar campos' clear entries button;
       *  You can update any info from a record by highlighting it than clicking on the 'aplicar mudança' aplie change button, most usefull for turning the deal to 'pago' payed from 0 (not payed) to 1 (payed) or * (Past due by more than a month) (for more information on why the need for the filters see use case cenarious(3)); 
+      * Lembrete - reminder, right when you open the page, gives a list of cases where the date for the deal is about 3 to 5 days ahead, to send a reminder about the upcoming deal, it skips the weekends. To test just make a deal 3 days after today and when you open the page again the list should apear with a option to send the message.
       *  Pesquisar - search option menu on the top left corner, has the 'pesquisar por nome' search by name option which opens a page where you can search the name and it returns a list sorted by the closest to the name given, than the 'Resetar' reset option which returns the treeview to it's original position; 
       *  Options 'Mostrar pagos' and 'não mostrar pagos' are Show paid, and do not show paid in this order;
       *   'tema do sistema' being the sistem defalt theme, the rest are self explenatorie;
@@ -115,12 +116,34 @@ PS: The repository contains mostly .TCL files becouse of the heavy imports the A
     
      2. Open the Devedor.csv file, add a valid phone number and email (PLEASE USE A PERSONAL OR FAMILY NUMBER AND EMAIL) to the sections where it is asked (ROW AD - 'DevOBS'), it'll be asked as * INSERT NUM HERE * and * INSERT E-MAIL HERE * . The number MUST contain the country especific code (Brazil being 55), in my version it is not nessesery as i only use it with brasilian numbers.
      
-     3. Open the app or run the python file, it'll open the command line with a few options.
+     3. Open the app or run the python file, it'll open the command line with a few options, all of them being variants of the function 'query_mluz_csv' which after running .
      
-     4. Cob functions, being any of them, only difference being the metod in which to send the message. If whastapp or all it'll ask for you to login to whatsapp via your phones app QRcode. It'll ask for a few filters before running like the 'setor' sector and employees (for more info on the meaning and nessesity of the sector see use case cenarious(3))
+     4. Cob functions, being any of them, only difference being the metod in which to send the message. If whastapp or all it'll ask for you to login to whatsapp via your phones app QRcode. It'll ask for a few filters before running like the 'setor' sector, and employees, you should chose between 6 and 7, does not matter that much in this demonstration (for more info on the meaning and nessesity of the sector, and separation of emplooyes see use case cenarious(3)). The functions derive from a function in code 'query_mluz_csv' which after running askes if you'd like to get a analysis of what contacts where missing per case for further search (for more info on why see use case cenarious(3)).
+     
+     5. Continuar function - continue, continues where you left of on a certain filter (sector and employee) given the number in which you stoped, the same being printed out when running any of the cob fuctions. When it reaches the number of the case you have chosen it'll ask which method you like to send the message. Like the cob functions it derives from a function in code 'query_mluz_csv' which after running askes if you'd like to get a analysis of what contacts where missing per case for further search (for more info on why see use case cenarious(3)).
+     
+     6. Analise - Analysis, passes thrue all cases on a given filter mostly to access the functionality that like all functions derived from a function in code 'query_mluz_csv' which after running askes if you'd like to get a analysis of what contacts where missing per case for further search (for more info on why see use case cenarious(3)).
+     
+     7. Test_func - askes which method you'd like to test, than it'll ask  for a number and email if method selected sending a message and testing various functionalities like gender guessing, and message sending in general.
+     
+     8. Ajuda - Help, contains an explanation for the functions in the command line tool, but it's all in portuguese.
 
 PS: *Your sistem must be able to run Python 3.10 minimum to run any of the EXE files.* The information in the Sample files, and Devedor.CSV is all fictional and used as exemples only, to protect the information in my works database, but show how it the information is presented in a real world cenario.
 
 # 3. Use case Scenarios:
+General explanations for the concepts presented in the whole reposetory.
+
+  * Agenda 2023 1.4:
+     * Filter need - 1 is paid, 0 is not paid, and 2 is past due by more than a month, being needed mostly not mix the paid with not paid, and most important the ones that are way past due, and need more 'atention' per say, being even a different color. the app has the option to not show the paid ones as not to over crownd the scren with information, as it can have up to 100 payments per month. 
+  
+     * File logic - I need to take a file given by the Access 2010 runtime containing all the deals('Devedores por funcionario sample'), and compare with the past month agenda gotten by the 'get excel' (Month analys) function, this analysis and comparing took a long time, like 3 4 hours and usualy was unefective as i left details out, like from which phone is the contact, or if it has a payment past due, resulting in erros down the line.
+     
+     * Lista de desfeito - unmade deals list, it's used to separete deals that where unmade, that in general have a bigger chance of later down the line starting the deal over. it's also used as a report to my boss.
+     
+  * Cobrar_setor:
+    * Filter need - Mostly the scructionr of my works database in Access 2010 runtime, sector has various different pourposes, like 'C' being for deals, 'J' being completed deals, 'D' for 'protesto em cartório' which is a method of blocking a persons name, 'B' being  cases where they can't do the 'protesto em cartório' method and vise versa. Its usefull for differentiating cases when generating messages. Emplooye is very self explenatory, my work db has different employees with passwords and all, each having ther own different cases, that giving the need for a separetion.  
+    
+    * Analysis - most cases require an extensive reasearch to find the persons contact information, it's usefull to know whats missing in any given case, some might have one email and number for one person in the case, but lack all the info for the other one, or have just an email adress. Knowing this information helps me with reasearch later after the sistem runs.
+
 
 Disclaimer: *I do not take resposability of any misuse, spaming or abuseve use of my code, this is for demonstrarion and education purposes only.*
