@@ -805,21 +805,22 @@ def cob_dia(table):
                 cobrar_ = record[4]
                 obs = record[5]
                 if dia_atual == data:
-                    if str(prazo.casefold()) != str('None'.casefold()):
-                        response_prazo = messagebox.askyesno("Possui prazo", f"""Caso {nome} possui prazo para dia {prazo}, deseja cobrar mesmo assim?""")
-                        if response_prazo == 1:
-                            continue
-                        if response_prazo == 0:
-                                                        messagebox.showwarning("Prazo", f"O caso {nome} ja possui um prazo para data futura, OBS: {obs}")
-                                                        if obs == None:
-                                                                obs = 'none'
-                                                        obs_ = str(obs + " #PRAZO#")
-                                                        if nome not in acordo_cobdesl:
-                                                            dicto = {'nome': nome, 'obs': obs_}
-                                                            acordo_cobdesl.append(dicto)
-                                                            pass
-                                                        else:
-                                                              pass
+                    if prazo is not None: 
+                        if str(prazo.casefold()) != str('None'.casefold()):
+                            response_prazo = messagebox.askyesno("Possui prazo", f"""Caso {nome} possui prazo para dia {prazo}, deseja cobrar mesmo assim?""")
+                            if response_prazo == 1:
+                                continue
+                            if response_prazo == 0:
+                                                            messagebox.showwarning("Prazo", f"O caso {nome} ja possui um prazo para data futura, OBS: {obs}")
+                                                            if obs == None:
+                                                                    obs = 'none'
+                                                            obs_ = str(obs + " #PRAZO#")
+                                                            if nome not in acordo_cobdesl:
+                                                                dicto = {'nome': nome, 'obs': obs_}
+                                                                acordo_cobdesl.append(dicto)
+                                                                pass
+                                                            else:
+                                                                pass
                     else:
                         if pago == 0 or pago == 2:
                             if cobrar_ == 1:
@@ -1488,7 +1489,11 @@ def lookup_records(table):#PAGE
         global search_entry, search
         search = custk.CTkToplevel(main)
         search.title("Lookup Records")
+
         search.geometry("400x200")
+        search.minsize(400, 200)
+        search.maxsize(400, 200)
+ 
         if saved_color == "system":
             icon_primp = ("icons/Search_white.ico")
         elif saved_color == "light":
@@ -1718,7 +1723,10 @@ def analise(file_a, file_b):
             cob = cob_know(ts)
 
             data_ = date_manip(anal[f'data{i}'])
-            date_b = datetime.datetime.strptime(anal[f'data{i}'], '%d/%m/%Y').date()
+            try:
+                date_b = datetime.datetime.strptime(anal[f'data{i}'], '%d/%m/%Y').date()
+            except TypeError:#TODO translate timestamp to  strptime
+                pass
             num_month = date_b.month
  
             if int(anal[f'pago{i}']) == 2:
